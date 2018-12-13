@@ -1,0 +1,39 @@
+syntax = "proto2";
+package suoha;
+
+//import "msg_common.proto";
+
+//enum c_cmd {
+//    heartbeat_req = 0;
+//    heartbeat_resp = 1;
+//    time_req = 2;
+//    time_resp = 3;
+//    pop_up_msg_resp = 4;
+//}
+
+//service msg_base_service {
+//    rpc heartbeat (heartbeat_req) returns (heartbeat_resp);
+//    rpc time (time_req) returns (time_resp);
+//    rpc pop_up_msg (undefined) returns (pop_up_msg_resp);
+//}
+
+// 心跳
+message HeartbeatReq {
+    required uint64 id = 1;
+}
+message HeartbeatResp {
+    required uint64 id = 1;
+}
+
+// 请求服务器时间
+message TimeReq {
+}
+
+message TimeResp {
+    required uint64 time = 1; // 时间戳(毫秒)
+}
+
+// 弹窗消息
+message PopupMsgResp {
+    required string msg = 1;
+}

@@ -1,0 +1,1 @@
+main.go file.go 依赖的github.com/pbmeta 去github下载 https://github.com/davyxu/pbmeta

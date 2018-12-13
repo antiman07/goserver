@@ -1,0 +1,189 @@
+syntax = "proto2";
+package suoha;
+
+//import "msg_common.proto";
+import "msg_role_common.proto";
+
+//enum c_cmd {
+//    push_room_info = 0;
+//    stage_push = 1;
+//    operation_req = 2;
+//    base_chips_push = 3;
+//    deal_cards_push = 4;
+//    final_deal_resp = 5;
+//    spread_cards_push = 6;
+//    check_cards_push = 7;
+//    look_resp = 8;
+//    push_pos_operation = 9;
+//    relogin_info_resp = 10;
+//    settle_chips_push = 11;
+//    leave_room_push = 13;
+//    room_code_resp = 14;
+//}
+
+enum stage_type {
+	room_6303_reverse = 0;
+    STAGE_READY = 1;           // 准备阶段
+    STAGE_BET = 2;             // 下注阶段, 加注,跟注
+    STAGE_DEAL = 3;             // 发牌阶段
+    STAGE_SPRADE = 4;          // 翻牌阶段, 发第五张牌,选择翻哪一张
+    STAGE_FINAL_ROUND = 5;     // 最后操作阶段, 加注,看牌
+    STAGE_CHECK = 6;          // 比牌阶段
+    STAGE_SETTLE = 7;          // 结算阶段
+}
+
+enum room_code {
+	room_code_reverse = 0;
+    LOW_CHIPS = 1; //筹码低于下限
+}
+
+//service msg_room_6303_service {
+//    rpc push_room_info (undefined) returns (push_room_info); // 推新金额
+//    rpc stage_push(undefined) returns (stage_push);     //阶段信息
+//    rpc operation (operation_req) returns (undefined); // 操作
+//    rpc operation_push (undefined) returns (push_pos_operation); // 操作返回
+//    rpc base_chips (undefined) returns (base_chips_push); // 下底注
+//    rpc deal_cards (undefined) returns (deal_cards_push); // 发牌
+//    rpc final_deal (undefined) returns (final_deal_resp); // 发最后一张牌
+//    rpc spread_cards (undefined) returns (spread_cards_push); // 翻牌, 翻牌阶段,比牌阶段翻转暗牌
+//    rpc check_cards (undefined) returns (check_cards_push); // 比牌, 翻牌阶段,比牌阶段翻转暗牌
+//    rpc look_card (undefined) returns (look_resp); // 看牌
+//    rpc relogin_room (undefined) returns (relogin_info_resp); // 重连
+//    rpc settle_account (undefined) returns (settle_chips_push); // 结算
+//    rpc leave_push (undefined) returns (leave_room_push); // 离开房间
+//    rpc room_code (undefined) returns (room_code_resp); // 消息返回
+//}
+
+// 推送房间信息
+message PushRoomInfo {
+    required uint32 self_pos = 1; // 座位号
+    repeated SeatInfo seats = 2; // 座位列表
+}
+
+// 座位信息
+message SeatInfo {
+    required uint32 pos = 1; // 座位号
+    required string nickname = 2; // 昵称
+    required uint64 chips = 3; // 玩家金额
+    required uint32 avatar = 4; // 玩家头像
+    required role_sex sex = 5; // 性别
+    repeated uint32 cards = 6; // 牌列表
+    optional uint32 card_type = 7; // 手牌类型
+    optional uint32 curr_chips = 8; // 下注
+    optional int64 profit = 9; //盈利
+    optional bool is_discard = 10; //是否弃牌
+    optional bool is_showhand = 11; //是否showhand
+    optional uint32 sprade_index = 12; //翻牌标志, 0 -> 第一张; 1 -> 最后一张
+}
+
+// 发牌信息
+message CardInfo {
+    required uint32 pos = 1;    //位置
+    repeated uint32 cards = 2;  // 新发的牌列表
+    optional uint32 card_type = 3;  //牌型
+}
+
+message BaseChipsPush {
+    repeated ChipsInfo info = 1;
+}
+
+//发牌
+message DealCardsPush {
+    repeated CardInfo info = 1;    //发牌信息
+}
+
+//翻牌阶段,发最后一张牌, 弃牌玩家没数据
+message FinalDealResp {
+    optional uint32 cards = 1; //最后一张手牌
+    optional uint32 first_card = 2; //第一张手牌
+}
+
+//翻牌信息
+message SpreadInfo {
+    required uint32 pos = 1;    // 位置
+    required uint32 index = 2;  // 0 => 第一张暗牌, 1 => 最后一张牌
+    required uint32 cards = 3;  // 新发的牌列表
+}
+
+//翻牌阶段,翻牌数据
+message SpreadCardsPush {
+    repeated SpreadInfo info = 1;    //翻牌信息
+}
+
+//比牌阶段,翻开最后一张牌
+message CheckCardsPush {
+    repeated CardInfo info = 1;    //牌信息
+}
+
+// 推送所有人: 阶段操作
+message StagePush {
+    required stage_type stage = 1; //操作阶段
+    required uint32 round_time = 2; // 操作时间 秒
+    optional uint32 curr_pos = 3;    // 当前操作人的pos
+    optional uint32 round_stage = 4;    //回合阶段标志,1 => 第一回合， 2 => 第二回合
+}
+
+// 玩家操作类型
+enum operation_type {
+    look = 0; // 看牌
+    pass = 1; // 过牌
+    discard = 2; // 弃牌
+    cingl = 3; // 跟注
+    raise = 4; // 加注
+    showhand = 5; // 梭哈
+    sprade = 6; //翻牌
+    check = 7; // 比牌
+}
+
+// 玩家的操作 请求
+message OperationReq {
+    required operation_type operation = 1; // 玩家的操作类型
+    optional uint32 value = 2; // 操作附带的值: 4. 加注时为加注筹码倍数; 6. 0 => 第一张暗牌, 1 => 最后一张牌 ..
+}
+
+message LookResp {
+    required uint32 card = 6; // 牌
+}
+
+// 推送玩家操作
+message PushPosOperation {
+    required uint32 curr_pos = 1; // 当前出牌人的pos
+    required operation_type operation = 2; // 玩家的操作
+    optional uint32 operation_value = 3; // 操作附带的值: 1. 加注时为加注筹码 ...
+    optional uint32 req_value = 4;  //  请求值, 4. 加注倍数; 5. showhand的值,100 ...
+}
+
+// 金额信息
+message ChipsInfo {
+    required uint32 pos = 1; // 座位号
+    required uint64 chips = 2; // 实际筹码数
+    required int64 profit = 3; //盈利
+}
+
+//结算收益
+message SettleChipsPush {
+    repeated ChipsInfo info = 1;
+}
+
+//离开房间
+message LeaveRoomPush {
+    required uint32 pos = 1; // 座位号
+}
+
+message ReloginInfoResp {
+    required uint32 pos = 1; // 座位号
+    required stage_type stage = 2;  // 当前阶段
+    required uint32 round_time = 3; // 操作时间 秒
+    optional uint32 curr_pos = 4;    // 当前操作人的pos
+    repeated SeatInfo seats = 5; // 座位列表,所有玩家信息
+    required uint32 ante = 6;  //底注
+    required uint32 raise_multi = 7; //加注倍数
+    required uint64 all_curr_chips = 8; //下注总金额
+    required uint32 round = 9;  //第几回合
+    repeated uint32 hide_cards = 10;    //盖住的牌,第一张是底牌,第二张是最后的牌,没有牌为undefined
+}
+
+// 信息
+message RoomCodeResp {
+    required room_code code = 1;
+}

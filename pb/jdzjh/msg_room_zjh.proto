@@ -1,0 +1,131 @@
+// 房间相关,包括战斗消息和获奖消息
+//import "msg_common.proto";
+//import "msg_role_common.proto";
+
+syntax = "proto2";
+package jdzjh;
+
+//enum c_cmd {
+//    roomInfoReq = 5;
+//    roomInfoResp = 6;
+//    gamePlayerInfoPush = 7;
+//    gamePush = 8;
+//    userOperationReq = 9;
+//    userOperationResp = 10;
+//    gameResult = 11;
+//    gameSettlementPush = 12;
+//    gmReq = 13;
+//    gmResp = 14;
+//    playerReconnect = 15;
+//    playerMsg = 16;
+//}
+
+//service msg_room_zjh_service {
+//    rpc game_player_info_push (undefined) returns (gamePlayerInfoPush);         // 玩家信息
+//    rpc game_push (undefined) returns (gamePush);                               // 游戏
+//    rpc handle_user_operation (userOperationReq) returns (userOperationResp);   // 用户操作
+//    rpc game_settlement_push (undefined) returns (gameSettlementPush);          // 结算结果
+//    rpc gm(gmReq) returns (gmResp);                                             // GM指令
+//    rpc player_reconnect (undefined) returns (playerReconnect);                 // 断线重连数据推送
+//}
+
+message GamePlayerInfoPush {
+    repeated PlayerInfo player_infos = 1;
+}
+
+message PlayerInfo {
+    optional uint32 pos = 1;
+    required string nickname = 2;   // 玩家昵称
+    required uint32 avatar = 3;     // 玩家头像
+    optional uint64 chips = 4;
+    optional uint32 is_yours = 5;   // 1 这个信息是你的，2 这个信息是其他玩家
+}
+
+// 游戏逻辑相关推送
+message GamePush {
+    required uint32 type = 1;
+    // 1：推送庄家
+    // 2: 提示进入发牌阶段，前端开始发牌
+    // 3: 推送投注相关状态
+    // 4: 推送当前操作玩家
+    // 5: 看牌推送
+    // 6: 弃牌推送
+    // 7: 跟注推送
+    // 8: 加注推送
+    // 9: 比牌推送
+    // 10: 结束标志，推送胜利玩家列表
+
+    optional uint64 key_id = 2;
+    // 当 type == 1时，这里庄家seat_Id
+    // 当 type == 3、4、5、6、7、8时，这里是玩家seat_Id
+    // 当 type == 9 时，这里是发起比牌的玩家 seat_Id
+    repeated uint64 value_list = 3;
+    // 当 type == 3时，表示投注相关状态 [a,b,c,d,e,f] 对应 ： 封顶，初始底注，当前底注，当前总注，玩家总投注，玩家当前余额
+    // 当 type == 4时，[a,b] 对应：操作轮次，剩余操作时间
+    // 当 type == 5时，[a,b,c,CardsType] 对应：a、b、c玩家的三张牌，CardsType 为牌的类型
+    // 当 type == 7时，[a] 对应：玩家的跟注金额
+    // 当 type == 8时，[a,b] 对应：加注金额，加注倍数
+    // 当 type == 9时，[a,b] 对应：被比牌玩家seat_Id，输的玩家seat_Id
+    // 当 type == 10时，[...] 对应：胜利玩家 seat_Id 列表
+}
+
+message UserOperationReq {
+    required uint32 operation_key = 1;      // 1 看牌， 2 弃牌，3 跟注， 4 加注，5 比牌
+    optional uint32 operation_value = 2;    // 当key是加注的时候，这里是倍数。当key是比牌的时候，这里是OtherSeatId
+}
+
+message UserOperationResp {
+    required uint32 result = 1;             // 1 成功， 2 失败
+    required uint32 operation_key = 2;      // 对应的操作 如果返回 6 时是非法操作
+}
+
+message GameSettlementPush {
+    repeated GameResult result = 1;
+}
+
+message GameResult {
+    required bool is_winner = 1;            // 是否为赢家
+    required uint64 seat_id = 2;            // 座位号
+    required sint64 result = 3;             // 结算结果
+}
+
+message GmReq {
+    required uint32 room_type = 1;          // 房间类型
+    required uint32 player_num = 2;         // 人数 2 ~ 5
+    repeated PlayerCards players_cards = 5; // 玩家手牌
+}
+
+message PlayerCards {
+    required uint32 seat_id = 1;            // 玩家座位号
+    repeated uint64 cards = 2;              // 对应的手牌 [A, B, C] 三张手牌
+}
+
+message GmResp {
+    required uint32 result = 1;             // 1 成功，2 失败
+}
+
+message PlayerReconnect {
+    required uint32 room_type = 1;          // 房间类型
+    required uint64 ante_limit = 2;         // 封顶
+    required uint64 ante_init = 3;          // 初始底注
+    required uint64 cur_ante_init = 4;      // 当前底注
+    required uint64 cur_all_ante = 5;       // 当前总赌注
+    required uint32 cur_ante_multiple = 6;  // 当前底注倍数
+    required uint32 round = 7;              // 轮数
+    repeated sint32 cur_seat_id = 8;        // [a, b], a: 当前操作座位号, b: 剩余操作时间, 若处于发牌阶段 b = -1
+    repeated PlayerMsg players = 9;         // 玩家信息
+}
+
+message PlayerMsg {
+    required uint32 seat_id = 1;            // 座位号
+    required string name = 2;               // 名字
+    required uint32 avatar = 3;             // 头像
+    required uint64 chips = 4;              // 余额
+    required bool is_banker = 5;            // 是否是庄家
+    required bool is_yours = 6;             // 是否是自己的信息
+    required uint64 all_ante = 7;           // 玩家总赌注
+    optional bool is_check = 8;             // 是否看牌
+    repeated uint64 cards = 9;              // [a,b,c,d] a、b、c 为卡牌id， d 为牌型
+    optional bool is_discard = 10;          // 是否弃牌
+    optional bool is_cmp_lose = 11;         // 是否比牌失败
+}

@@ -1,0 +1,99 @@
+package main
+
+import (
+	"github.com/cellnet"
+	_ "github.com/cellnet/codec/json"
+	"github.com/cellnet/examples/chat/proto"
+	"github.com/cellnet/peer"
+	_ "github.com/cellnet/peer/gorillaws"
+	"github.com/cellnet/proc"
+	_ "github.com/cellnet/proc/gorillaws"
+	"github.com/cellnet/util"
+	"github.com/golog"
+)
+
+var log = golog.New("websocket_server")
+var logex = golog.New_ex("myclient",golog.Create_MyWrite_File("./server.txt"))
+
+func HandleTask(tasklist* util.Pipe){
+
+	var writeList []interface{}
+
+	for {
+		writeList = writeList[0:0]
+		exit := tasklist.Pick(&writeList)
+
+
+		// 遍历要发送的数据
+		for _, ev := range writeList {
+			ll := ev.(cellnet.Event)
+			switch msg := ll.Message().(type) {
+			case *proto.TestEchoACK:
+
+				log.Debugf("--server--: %+v", ll)
+				ll.Session().Send(&proto.TestEchoACK{
+					Msg:   "hello client",
+					Value: msg.Value,
+				})
+			}
+		}
+
+		if exit {
+			break
+		}
+	}
+}
+
+func main() {
+
+	tasklist :=  util.NewPipe()
+
+
+	// 创建一个事件处理队列，整个服务器只有这一个队列处理事件，服务器属于单线程服务器
+	queue := cellnet.NewEventQueue()
+
+	p := peer.NewGenericPeer("gorillaws.Acceptor", "server", "http://127.0.0.1:18802/echo", queue)
+
+	proc.BindProcessorHandler(p, "gorillaws.ltv", func(ev cellnet.Event) {
+
+		switch msg := ev.Message().(type) {
+
+		case *cellnet.SessionAccepted:
+			log.Debugln("server accepted")
+			logex.Debugln("server accepted client conn [%+v]",ev)
+			// 有连接断开
+		case *cellnet.SessionClosed:
+			log.Debugln("server recv session closed: ", ev.Session().ID())
+			logex.Debugln("session closed [%+v]",ev)
+		case *proto.ChatACK:
+			log.Infof("sid%d say: %s", msg.Id, msg.Content)
+			ev.Session().Send(&proto.ChatACK{
+				Content: "HELLO CLIENT",
+				Id:      ev.Session().ID(),
+			})
+		case *proto.TestEchoACK:
+			logex.Debugln("server recv TestEchoACK [%+v]",ev)
+			tasklist.Add(ev)
+
+		/*
+			log.Debugf("recv: %+v", msg)
+
+			ev.Session().Send(&proto.TestEchoACK{
+				Msg:   "hello client",
+				Value: 222,
+			})
+		*/
+		}
+	})
+
+	go HandleTask(tasklist)
+	// 开始侦听
+	p.Start()
+
+	// 事件队列开始循环
+	queue.StartLoop()
+
+	// 阻塞等待事件队列结束退出( 在另外的goroutine调用queue.StopLoop() )
+	queue.Wait()
+
+}

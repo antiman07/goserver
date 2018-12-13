@@ -1,0 +1,15 @@
+syntax = "proto2";
+package suoha;
+// cmd 必须是小写
+// 大于20的协议登陆之后才能处理
+//enum cmd {
+//    msg_base = 0;       // 心跳
+//    msg_login = 1;      // 登陆
+//    msg_role = 21;      // 角色
+//    msg_lobby = 22;     // 大厅
+//    msg_broadcast = 23; // 广播
+//    msg_gm = 24; // 广播
+
+    // 唆哈协议
+//    msg_room_6303 = 64;
+//}

@@ -1,0 +1,86 @@
+package main
+
+import (
+	"fmt"
+	"github.com/cellnet"
+	_ "github.com/cellnet/codec/json"
+	"github.com/cellnet/peer"
+	"github.com/cellnet/proc"
+	"github.com/cellnet/examples/chat/proto"
+	_ "github.com/cellnet/peer/gorillaws"
+	_ "github.com/cellnet/proc/gorillaws"
+	"github.com/cellnet/util"
+	"github.com/golog"
+	"time"
+)
+
+var log1 = golog.New("websocket-client")
+var log_client = golog.New_ex("myclient",golog.Create_MyWrite_File("./client.txt"))
+
+func ClientHandleTask(tasklist *util.Pipe){
+	var tmp_writeList []interface{}
+	var index int32
+	for {
+		tmp_writeList = tmp_writeList[0:0]
+		exit := tasklist.Pick(&tmp_writeList)
+
+
+		// 遍历要发送的数据
+		for _, ev := range tmp_writeList {
+			//self.SendMessage(&cellnet.SendMsgEvent{self, msg})
+			//log1.Debugf("--client--: %+v", ev)
+			ll:= ev.(cellnet.Event)
+			ll.Session().Send(&proto.TestEchoACK{
+				Msg:   "hello server",
+				Value: index,
+			})
+		}
+
+		if exit {
+			break
+		}
+
+		index += 1
+		time.Sleep(time.Duration(3)*time.Second)
+	}
+}
+
+func main(){
+	ch := make(chan int)
+
+	for i:=0; i<10; i++{
+		tasklist :=  util.NewPipe()
+
+		queue := cellnet.NewEventQueue()
+		p := peer.NewGenericPeer("websocket.Connector","client","127.0.0.1:18802",queue)
+
+		proc.BindProcessorHandler(p,"gorillaws.ltv", func(ev cellnet.Event){
+			switch msg := ev.Message().(type) {
+			case *cellnet.SessionConnected:
+				log_client.Debugln("client connected [%+v]",ev)
+				log1.Debugln("client connected")
+				ev.Session().Send(&proto.TestEchoACK{
+					Msg: "HELLO SERVER",       // 聊天内容
+					Value:      0,
+				})
+			case *cellnet.SessionClosed:
+				log1.Debugln("client error",msg)
+				log_client.Debugln("client SessionClosed [%+v]",ev)
+			case *proto.ChatACK:
+				log1.Infof("sid%d say: %s", msg.Id, msg.Content)
+			case *proto.TestEchoACK:
+				log_client.Debugln("client recv TestEchoACK  [%+v]",ev)
+				tasklist.Add(ev)
+
+			}
+		})
+
+		go ClientHandleTask(tasklist)
+		p.Start()
+		queue.StartLoop()
+	}
+
+
+	<- ch
+	fmt.Println("game over")
+}

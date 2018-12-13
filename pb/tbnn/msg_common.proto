@@ -1,0 +1,19 @@
+syntax = "proto2";
+package tbnn;
+
+
+message Undefined {
+}
+
+message DmsgContent{
+    required string msg_type = 1; // "chars" / "number" / Other(eg:"fish_name")
+    optional string chars = 2;
+    optional uint64 number = 3;
+    optional uint32 id = 4;
+}
+
+// 消息
+message Dmsg {
+    required uint32 id = 1; // id
+    repeated DmsgContent content = 2; // 内容
+}

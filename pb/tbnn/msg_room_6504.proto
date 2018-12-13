@@ -1,0 +1,126 @@
+syntax = "proto2";
+package tbnn;
+
+// 房间相关,包括战斗消息和获奖消息
+//import "msg_common.proto";
+//import "msg_role_common.proto";
+
+//enum c_cmd {
+//    enter_room_push = 0;
+//    multi_list_push = 1;
+//    bet_multi_req = 2;
+//    bet_multi_push = 3;
+//    deal_card_resp = 4;
+//    spread_card_req = 5;
+//    spread_card_push = 6;
+//    settle_chip_push = 7;
+//    code_info_resp = 8;
+//    sync_room_stage_push = 9;
+//    relogin_info_resp = 10;
+//}
+
+enum msg_room_stage {
+	msg_room_stage_reserve = 0;
+    ROOM_STAGE_READY = 1;           // 准备阶段
+    ROOM_STAGE_BET = 2;             // 下注阶段
+    ROOM_STAGE_DEAL = 3;             // 发牌阶段
+    ROOM_STAGE_SPRADE = 4;          // 翻牌阶段
+    ROOM_STAGE_SETTLE = 5;          // 结算阶段
+}
+
+enum msg_room_code {
+	msg_room_code_reserve = 0;
+    JETTION_NOT_ENOUGH = 1; // 筹码不够
+    BET_NOT_MATCH = 2;  //下注不符合规则
+    STOP_GAME = 3; //有玩家筹码不够，提前结束游戏
+}
+
+
+message PokerInfo {
+    required uint32 point = 1;
+    required uint32 color = 2;
+}
+
+message EnterRoomPush {
+    required uint32 role_pos = 1;       //玩家自己的位置
+    repeated RoomRoleInfo role = 2; //所有用户信息
+}
+
+message SyncRoomStagePush {
+    required msg_room_stage stage = 1;  // 当前阶段
+    required uint32 t_time = 2;     // 剩余秒数
+}
+
+//下注倍数列表
+message MultiListPush {
+    repeated uint32 multi_list = 1; // 下注倍数列表
+}
+
+//下注请求
+message BetMultiReq {
+    required uint32 multi = 1; // 下注倍数请求
+}
+
+//下注结果
+message BetMultiPush {
+    required uint32 pos = 1; // 座位号
+    required uint32 multi = 2; // 下注
+}
+
+//发牌
+message DealCardResp {
+    repeated PokerInfo cards = 1; // 手牌
+}
+
+//翻牌
+message SpreadCardReq {
+}
+
+//翻牌结果
+message SpreadCardPush {
+    repeated SpreadInfo info = 1; // 翻牌信息
+}
+
+message SpreadInfo {
+    required uint32 pos = 1; // 座位号
+    required uint32 card_type = 2; // 牌型
+    repeated PokerInfo cards = 3; // 手牌
+}
+
+
+//结算收益
+message SettleChipPush {
+    repeated SettleInfo info = 1; // 结算信息
+}
+
+message SettleInfo {
+    required uint32 pos = 1; // 座位号
+    required uint64 chips = 2; // 实际筹码数
+    required int64 profit = 3; //盈利
+}
+
+// 错误信息
+message CodeInfoResp {
+    required msg_room_code code = 1;
+}
+
+message ReloginInfoResp {
+    required uint32 pos = 1; // 座位号
+    required uint64 chips = 2; // 实际筹码数
+    required msg_room_stage stage = 3;  // 当前阶段
+    required uint32 t_time = 4;     // 剩余秒数
+    required uint32 room_ante = 5;  //房间倍数
+    repeated RoomRoleInfo role = 6; //所有用户信息
+}
+
+// 房间内角色信息
+message RoomRoleInfo {
+    required uint32 avatar = 2; // 玩家头像
+    required string nickname = 3; // 用户昵称
+    required uint32 pos = 4; // 玩家位置
+    required uint64 chips = 5; // 实际筹码数
+    optional int64 profit = 6; //盈利
+    repeated PokerInfo cards = 7; //手牌
+    optional uint32 card_type = 8; // 手牌牌型
+    optional uint32 bet_multi = 9; // 下注倍数
+}

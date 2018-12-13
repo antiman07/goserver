@@ -1,0 +1,25 @@
+syntax = "proto2";
+package jdzjh;
+
+import "msg_common.proto";
+
+// 广播相关,获奖消息广播等
+//enum c_cmd {
+//    bcast_world_resp = 1;   // 全局广播
+//    bcast_msg_resp = 2;     // 广播消息
+//}
+
+//service msg_broadcast_service {
+//    rpc broadcastWorld (undefined) returns (bcast_world_resp);
+//    rpc broadcastMsg (undefined) returns (bcast_msg_resp);
+//}
+
+// 全局广播信息
+message BcastworldResp {
+    required string content = 1; // 广播内容
+}
+
+// 广播消息 多语言
+message BcastMsgResp {
+    required Dmsg msg = 1;
+}

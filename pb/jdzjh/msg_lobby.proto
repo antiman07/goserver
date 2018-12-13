@@ -1,0 +1,75 @@
+syntax = "proto2";
+package jdzjh;
+
+// 大厅模块,大厅相关消息
+//import "msg_common.proto";
+//import "msg_role_common.proto";
+
+//enum c_cmd {
+//    room_info_push = 0;
+//    start_match_req = 1;
+//    start_match_resp = 2;
+//    cancel_match_req = 3;
+//    cancel_match_resp = 4;
+//    leave_room_req = 5;
+//    leave_room_resp = 6;
+//}
+
+//service msg_lobby_service {
+//    rpc room_info_notify (undefined) returns (room_info_push);              // 推送房间列表信息
+//    rpc start_match (start_match_req) returns (start_match_resp);           // 开始匹配房间
+//    rpc cancel_match (cancel_match_req) returns (cancel_match_resp);        // 取消匹配房间
+//    rpc leave_room (leave_room_req) returns (leave_room_resp);              // 离开房间
+//}
+
+enum lobby_code {
+	reserve = 0;
+    lobby_success = 1;            // 成功
+    lobby_fail = 2;               // 失败
+    chips_not_enough = 3;   // 筹码不够
+    chips_up_limit = 4;     // 筹码超过上限
+    already_in_queue = 5;   // 已经在队列中
+}
+
+message RoomInfo {
+    required uint32 room_type = 1;      // 房间类型
+    required uint32 ante = 2;           // 底注
+    required uint64 lowest = 3;         // 准入
+    optional uint32 member_num = 4;     // 人数
+    optional uint64 limit = 5;          // 封顶
+    optional bool is_open = 6;          // 是否开放
+}
+
+// 推送房间信息
+message RoomInfoPush {
+    repeated RoomInfo room_list = 1;
+}
+
+// 开始匹配房间 请求
+message StartMatchReq {
+    required uint32 type = 1;
+}
+
+// 开始匹配房间 返回
+message StartMatchResp {
+    required lobby_code code = 1;
+    optional uint32 type = 2;
+}
+
+// 取消匹配房间 请求
+message CancelMatchReq {
+}
+
+// 取消匹配房间 返回
+message CancelMatchResp {
+    required lobby_code code = 1;
+}
+
+// 离开房间房间 请求
+message LeaveRoomReq {
+}
+
+// 离开房间房间 返回
+message LeaveRoomResp {
+    required lobby_code code = 1;
+}

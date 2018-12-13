@@ -1,0 +1,38 @@
+syntax = "proto2";
+package jdzjh;
+
+import "msg_common.proto";
+
+// 性别
+enum role_sex {
+    man = 0;    // 男
+    woman = 1;  // 女
+}
+
+// 角色信息
+message RoleInfo {
+    required string account = 1;        // 帐号
+    required int64 agent_id = 2;        // 代理商id
+    required int64 owner_id = 3;        // 包网商id
+    required uint64 chips = 4;          // 余额
+    required string nickname = 5;       // 玩家昵称
+    required uint32 level = 6;          // 玩家等级
+    required uint32 avatar = 7;         // 玩家头像
+    required role_sex sex = 8;          // 性别
+    optional bool is_new = 9;           // 是否第一次登录
+    required bool is_main_wallet = 10;  // 是否免转
+    optional uint64 main_wallet = 11;   // 中心钱包
+    optional bool auto_wallet = 12;     // 自动转入
+}
+
+// 终端类型
+enum game_terminal_type {
+	game_terminal_type_reserve = 0;
+    pc = 1;         // PC
+    ios_width = 2;  // IOS横
+    ios_hight = 3;  // IOS竖
+    and_widht = 4;  // android横
+    and_hight = 5;  // android竖
+    ort_wight = 6;  // 其他横
+    ort_hight = 7;  // 其他竖
+}

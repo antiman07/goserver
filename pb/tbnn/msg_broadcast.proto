@@ -1,0 +1,22 @@
+syntax = "proto2";
+package tbnn;
+import "msg_common.proto";
+
+
+
+// 广播相关,获奖消息广播等
+//enum c_cmd {
+//    bcast_world_resp = 1;   // 全局广播
+//    bcast_msg_resp = 2;     // 广播消息
+//}
+
+
+// 全局广播信息
+message BcastWorldResp {
+    required string content = 1; // 广播内容
+}
+
+// 广播消息 多语言
+message BcastMsgResp {
+    required Dmsg msg = 1;
+}

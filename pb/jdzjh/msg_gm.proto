@@ -1,0 +1,22 @@
+syntax = "proto2";
+package jdzjh;
+
+//import "msg_common.proto";
+//import "msg_role_common.proto";
+
+//enum c_cmd {
+//    gm_card_req = 1;
+//}
+
+//service msg_gm_service {
+//    rpc gm_card (gm_card_req) returns (undefined);     // gm设置排序
+//}
+
+message GmCardInfo {
+    required uint32 pos = 1;            //区域
+    repeated uint32 cards = 2;     //牌
+}
+
+message GmCardReq {
+    repeated GmCardInfo info = 1;
+}
