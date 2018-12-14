@@ -19,7 +19,7 @@ var room2times int32        //进入room2次数
 var room3times int32        //进入room3次数
 var room4times int32        //进入room4次数
 var roomOperList [5]RoomOperTimes   //所有玩家在每个房间 弃牌 跟注 加注次数统计 第一个0节点不用 只用 1 2 3 4
-
+var allRequestTimes   int64 //所有玩家的请求次数
 var calcGuard sync.Mutex
 
 func PrintPlayerOperator(begin time.Time,end time.Time){
@@ -28,6 +28,7 @@ func PrintPlayerOperator(begin time.Time,end time.Time){
 	myrpc.Rpcqueue <- fmt.Sprint("运行时长:",runtimes)
 	myrpc.Rpcqueue <- fmt.Sprint("启动机器人:",game.Robots)
 	myrpc.Rpcqueue <- fmt.Sprint("在线干活机器人:",game.RealWorkRobots)
+	myrpc.Rpcqueue <- fmt.Sprint("每秒请求次数:",allRequestTimes/int64(runtimes.Seconds()))
 	myrpc.Rpcqueue <- fmt.Sprint("成功进入游戏次数:",gametimes)
 	myrpc.Rpcqueue <- fmt.Sprint("进入游戏失败次数:",gameFailtimes)
 	myrpc.Rpcqueue <- fmt.Sprint("弃牌次数:",discardtimes)
@@ -60,6 +61,7 @@ func IncreAllPlayerData(p *Zjh_Player){
 	room2times += p.Room2times
 	room3times += p.Room3times
 	room4times += p.Room4times
+	allRequestTimes += p.AllRequestTimes
 
 	for i := 1; i <= 4; i++{
 		roomOperList[i].Cingltimes 	 += p.RoomOperList[i].Cingltimes

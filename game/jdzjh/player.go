@@ -1,6 +1,9 @@
 package jdzjh
 
-import "trunk/cellnet/pb/jdzjh"
+import (
+	"sync"
+	"trunk/cellnet/pb/jdzjh"
+)
 
 var Zjh_RoomInfoList []*jdzjh.RoomInfo
 
@@ -52,6 +55,7 @@ type Zjh_Player struct{
 	Room3times int32        		//进入room3次数
 	Room4times int32        		//进入room4次数
 	RoomOperList [5]RoomOperTimes   //该玩家在每个房间 弃牌 跟注 加注次数统计 第一个0节点不用 只用 1 2 3 4
+	AllRequestTimes int64           //玩家请求次数
 }
 
 type Atter struct{
@@ -74,6 +78,16 @@ func (self* Zjh_Player) PlayerName() string{
 	return "jdzjh"
 }
 
+var ccGuard sync.Mutex
+
+//有2个GO程访问这个函数  心跳GO程 和 事件处理GO程 所以加锁
+func (self* Zjh_Player) IncReqTimes()  {
+
+	ccGuard.Lock()
+	defer ccGuard.Unlock()
+
+	self.AllRequestTimes += 1
+}
 
 func (self* Zjh_Player) CalcTimes(type1 uint32)  {
 	switch type1{
