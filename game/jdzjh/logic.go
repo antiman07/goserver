@@ -120,6 +120,7 @@ var zjh_handle = func(ev cellnet.Event){
 			//关于 PreType =[7,8] 移步查看proto GamePush协议
 			if player.PrePos != 0/* && player.PreType == 7*/{
 				//跟进上家7 跟注操作
+				//跟进上家7 跟注操作
 				//myrpc.Rpcqueue <- fmt.Sprintf("%s 跟注操作1",player.Att.Account)
 				player.CalcTimes(CinglOperator)
 				player.RoomOperList[player.Room].Cingltimes += 1
