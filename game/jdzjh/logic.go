@@ -115,8 +115,8 @@ var zjh_handle = func(ev cellnet.Event){
 		tmptype := ev.Message().(*jdzjh.GamePush).Type
 		pos := ev.Message().(*jdzjh.GamePush).KeyId
 		if pos == uint64(player.Pos) && tmptype == 4{
-			//time.Sleep(time.Duration(util.GenerateRangeNum(4,6))*time.Second)
-			time.Sleep(time.Duration(game.Suspend)*time.Second)
+			time.Sleep(time.Duration(util.GenerateRangeNum(4,6))*time.Second)
+			//time.Sleep(time.Duration(game.Suspend)*time.Second)
 			//关于 PreType =[7,8] 移步查看proto GamePush协议
 			if player.PrePos != 0/* && player.PreType == 7*/{
 				//跟进上家7 跟注操作
