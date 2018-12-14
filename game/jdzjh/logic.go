@@ -29,6 +29,7 @@ var zjh_handle = func(ev cellnet.Event){
 	case *cellnet.SessionConnected:
 		myrpc.Rpcqueue <- "connect success"
 		login(ev,util.GenIntValue())
+		player.IncReqTimes()
 
 	case *jdzjh.UpdateTokenResp:
 	case *jdzjh.HeartbeatResp:
@@ -63,6 +64,7 @@ var zjh_handle = func(ev cellnet.Event){
 		player.Att.Mainwallet = role.MainWallet
 		player.Att.Autowallet = role.AutoWallet
 		ev.Session().Send(&jdzjh.GetChipsReq{})
+		player.IncReqTimes()
 		myrpc.Rpcqueue <- fmt.Sprintf("LoginResp playerid=%s",player.Att.Account)
 
 	case *jdzjh.GamePlayerInfoPush:
@@ -87,6 +89,7 @@ var zjh_handle = func(ev cellnet.Event){
 			Type:uint32(player.Room),
 		})
 		myrpc.Rpcqueue <- fmt.Sprintf("%s 请求进入游戏",player.Att.Account)
+		player.IncReqTimes()
 
 	case *jdzjh.StartMatchResp:
 		result := ev.Message().(*jdzjh.StartMatchResp).GetCode()
@@ -112,7 +115,7 @@ var zjh_handle = func(ev cellnet.Event){
 		tmptype := ev.Message().(*jdzjh.GamePush).Type
 		pos := ev.Message().(*jdzjh.GamePush).KeyId
 		if pos == uint64(player.Pos) && tmptype == 4{
-			//time.Sleep(time.Duration(util.GenerateRangeNum(5,10))*time.Second)
+			//time.Sleep(time.Duration(util.GenerateRangeNum(4,6))*time.Second)
 			time.Sleep(time.Duration(game.Suspend)*time.Second)
 			//关于 PreType =[7,8] 移步查看proto GamePush协议
 			if player.PrePos != 0/* && player.PreType == 7*/{
@@ -125,6 +128,7 @@ var zjh_handle = func(ev cellnet.Event){
 					OperationKey:3,
 					//OperationValue: 0,//跟注时 这个值无意义 可以随便写
 				})
+				player.IncReqTimes()
 
 			}else if player.PrePos != 0 && player.PreType == 8{
 				//跟进上家8 加注操作
@@ -137,11 +141,13 @@ var zjh_handle = func(ev cellnet.Event){
 					OperationKey:3,
 					//OperationValue:0,
 				})
+				player.IncReqTimes()
 
 			} else if player.PrePos == 0{
 				//这是新开局自己当庄,自己先出牌  2 弃牌，3 跟注， 4 加注
 				which_oper := util.GenerateRangeNum(DiscardOperator,RaisetimesOperator)
 				player.CalcTimes(uint32(which_oper))
+				player.IncReqTimes()
 				if which_oper == RaisetimesOperator{
 					//myrpc.Rpcqueue <- fmt.Sprintf("%s 加注操作2",player.Att.Account)
 					player.RoomOperList[player.Room].Raisetimes += 1
@@ -181,6 +187,7 @@ var zjh_handle = func(ev cellnet.Event){
 		player.PrePos = 0
 		player.PreValueArry = player.PreValueArry[:0]
 		ev.Session().Send(&jdzjh.GetChipsReq{})
+		player.IncReqTimes()
 
 	default:
 		fmt.Println("未知消息",msg)
@@ -205,6 +212,7 @@ func heartbeat(ev interface{}) {
 
 	ll := ev.(cellnet.Event)
 	session := ll.Session()
+	player := session.Player().(*Zjh_Player)
 
 	for {
 		conn, ok := session.Raw().(*websocket.Conn)
@@ -212,6 +220,7 @@ func heartbeat(ev interface{}) {
 			myrpc.Rpcqueue <- "退出心跳GO程"
 			break
 		}else{
+			player.IncReqTimes()
 			session.Send(&jdzjh.HeartbeatReq{Id: 2000,})
 			time.Sleep(time.Second * 1)
 		}
