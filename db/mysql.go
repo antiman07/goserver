@@ -3,47 +3,73 @@ package db
 import (
 	"fmt"
 	"strconv"
-	"time"
 )
 
-func insert(index int){
-
-	sql := "insert into t_user(user_id,acct_name)VALUES"
-	onedata := "(" + strconv.Itoa(index)  + ", '20180103002930')"
-
-	_,err := GDB.Exec(sql + onedata)
-	if err != nil{
-		panic(err.Error())
+func Insert(){
+	for i := 10000; i <= 20000; i++{
+		insert(i)
 	}
 }
 
-func insert1(index int){
-	stm,err1 := GDB.Prepare("INSERT INTO t_user(user_id,acct_name) values(?,?)")
+func insert(index int){
+	stm,err1 := GDB.Prepare("INSERT INTO tb_user(uid,nickname,chips,level,avatar,sex) values(?,?,?,?,?,?)")
 	if err1 != nil{
 		fmt.Println(err1.Error())
 	}
 	defer stm.Close()
 
-	_,err := stm.Exec(index,"user"+strconv.Itoa(index))
+	_,err := stm.Exec(index,"user"+strconv.Itoa(index),10000,1,"avatar",0)
 	if err != nil{
 		fmt.Println(err.Error())
 	}
 }
-func Create_db_data(){
-	for i := 1; i <= 10000; i++{
-		go insert2(i)
-		time.Sleep(time.Millisecond * 10)
-	}
-}
 
-func insert2(index int){
-	tx,_ := GDB.Begin()
+func Query(index string) ([]map[string]string,error) {
+	sql := "select * from tb_user where uid="
+	sql += index
 
-	defer tx.Commit()
+	var results []map[string]string
 
-	_,err := tx.Exec("INSERT INTO t_user(user_id,acct_name) values(?,?)",index,"user"+strconv.Itoa(index))
+	rows,err := GDB.Query(sql)
+	defer rows.Close()
+
 	if err != nil{
-		fmt.Println(err.Error())
+		return nil,err
+	}else{
+		cols,err := rows.Columns()
+		if err != nil{
+			return nil,err
+		}
+		vals := make([][]byte,len(cols))
+		scans := make([]interface{},len(cols))
+		for i := range vals{
+			scans[i] = &vals[i]
+		}
+
+
+		for rows.Next(){
+			err = rows.Scan(scans...)
+			if err != nil{
+				return nil,err
+			}
+
+			row := make(map[string]string)
+			for k,v := range vals{
+				key := cols[k]
+				row[key] = string(v)
+			}
+
+			results = append(results,row)
+		}
+
+		for k,v := range results{
+			fmt.Println(k,v)
+			id := v["uid"]
+			nn := v["nickname"]
+			sex := v["sex"]
+			fmt.Println(id,nn,sex)
+		}
 	}
+	return results,nil
 }
 

@@ -1,0 +1,82 @@
+syntax = "proto2";
+package ddz;
+
+//import "msg_common.proto";
+import "msg_role_common.proto";
+
+//enum c_cmd {
+//    chips_push = 0;
+//    set_avatar_req = 1;
+//    set_avatar_resp = 2;
+//    get_chips_req = 3;
+//    update_gt_req = 4;
+//    get_wallet_req = 5;
+//    get_wallet_resp = 6;
+//    set_wallet_req = 7;
+//    set_wallet_resp = 8;
+//}
+
+//service msg_role_service {
+//    rpc push_chips (undefined) returns (chips_push);                // 推新金额
+//    rpc set_avatar (set_avatar_req) returns (set_avatar_resp);      // 设置头像
+//    rpc get_chips (get_chips_req) returns (chips_push);             // 获取金额
+//    rpc update_gt (update_gt_req) returns (undefined);              // 终端标志
+//    rpc get_main_wallet (get_wallet_req) returns (get_wallet_resp); // 查询公共钱包的钱
+//    rpc set_main_wallet (set_wallet_req) returns (set_wallet_resp); // 设置免转钱包转入金额
+//}
+
+enum role_code {
+	role_reserver = 0;
+    success = 1;
+    fail = 2;
+    frequent = 3;   // 等待返回期间请求
+    frequenty = 4;  // 请求超限
+    not_enough = 5; // 中心钱包余额不足
+}
+
+// 推送金额
+message ChipsPush {
+    required string chips = 1;
+}
+
+// 设置头像请求
+message SetAvatarReq {
+    required uint32 avatar = 1;
+}
+
+// 设置头像返回
+message SetAvatarResp {
+    required uint32 avatar = 1;
+}
+
+// 获取金额请求
+message GetChipsReq {
+}
+
+// 更新终端类型请求
+message UpdateGtReq {
+    required game_terminal_type gt = 1;
+}
+
+// 中心钱包额度请求
+message GetWalletReq {
+}
+
+// 中心钱包额度返回
+message GetWalletResp {
+    required role_code code = 1;        // 主钱包返回
+    optional int64 chips = 2;           // 请求筹码数
+    optional int64 auto_wallet = 3;     // 自动额度
+}
+
+// 钱包转入请求
+message SetWalletReq {
+    required uint64 chips = 1;          // 请求筹码数
+    required bool is_auto = 2;          // 自动
+}
+
+// 钱包转入返回
+message SetWalletResp {
+    required role_code code = 1;        // 请求额度返回
+    optional int64 chips = 2;           // 中心钱包转钱
+}

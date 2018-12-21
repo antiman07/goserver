@@ -13,7 +13,7 @@ type Arg struct{
 	Logdata string
 }
 
-func Rpclog(log_addr string){
+func Rpclog(log_addr string,whichtype int){
 
 	client, err := rpc.DialHTTP("tcp",log_addr)
 	if err != nil{
@@ -30,7 +30,12 @@ func Rpclog(log_addr string){
 		if node == nil{
 			break
 		}else{
-			rpcclient.Call("Logtxt.WriteLog",Arg{Logdata:node.(string)},&reply)
+			if whichtype == 1{
+				rpcclient.Call("Logtxt.ServerWriteLog",Arg{Logdata:node.(string)},&reply)
+			}else{
+				rpcclient.Call("Logtxt.ClientWriteLog",Arg{Logdata:node.(string)},&reply)
+			}
+
 		}
 	}
 }

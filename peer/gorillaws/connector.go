@@ -90,8 +90,8 @@ func (self *websocketConnector) connect(address string) {
 		self.tryConnTimes++
 
 		// 尝试用Socket连接地址
-		//u := url.URL{Scheme: "ws", Host: address, Path: "/echo"}
-		u := url.URL{Scheme: "ws", Host: address, Path: "/"}
+		u := url.URL{Scheme: "ws", Host: address, Path: "/echo"}
+		//u := url.URL{Scheme: "ws", Host: address, Path: "/"}
 
 		conn,_,err := websocket.DefaultDialer.Dial(u.String(),nil)
 

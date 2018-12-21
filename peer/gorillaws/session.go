@@ -6,6 +6,7 @@ import (
 	"sync"
 	"trunk/cellnet"
 	"trunk/cellnet/game"
+	"trunk/cellnet/game/ddz"
 	"trunk/cellnet/game/jdzjh"
 	"trunk/cellnet/game/suoha"
 	"trunk/cellnet/game/tbnn"
@@ -181,6 +182,8 @@ func (self *WsSession) Start() {
 		self.player = new(jdzjh.Zjh_Player)
 	case "tbnn":
 		self.player = new(tbnn.Tbnn_Player)
+	case "ddz":
+		self.player = new(ddz.DDZ_Player)
 	default:
 		panic("not game name")
 	}

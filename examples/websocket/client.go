@@ -110,20 +110,20 @@ func parse_cmd_params()(){
 	//使用flag来操作命令行参数，支持的格式如下： -b=1   --b=1  -b 1  --b 1
 
 	//第一个参数表示参数名称，第二个参数表示默认值，第三个参数表示使用说明和描述
-	tmp_runmode := flag.Int("rm", 2, "进程启动模式 1:前台运行模式 2:后台运行模式")
-	tmp_robots := flag.Int("b", 1, "choose robot numbers")
+	tmp_runmode := flag.Int("rm", 1, "进程启动模式 1:前台运行模式 2:后台运行模式")
+	tmp_robots := flag.Int("b", 3, "choose robot numbers")
 	tmp_accid := flag.Int("i",10000,"批量开启机器人时 第一个账号ID")
 	tmp_roomid := flag.Int("r", 1, "choose roomid")
 	tmp_betmulti := flag.Int("s", 1, "choose betmulti")
 	tmp_betmulti_time := flag.Int("t", 5, "choose betmulti_time")
 	tmp_spreadcard_time := flag.Int("p", 2, "choose spreadcard_time")
-	tmp_which_game := flag.String("game","jdzjh","choose game to test")
+	tmp_which_game := flag.String("game","ddz","choose game to test")
 
-	tmp_ipaddr := flag.String("addr","10.200.124.133:11302","choose game server ip port like as 10.200.124.133:6302")
-	//tmp_ipaddr := flag.String("addr","192.168.10.23:6302","choose game server ip port like as 192.168.200.54:10303")
+	//tmp_ipaddr := flag.String("addr","10.200.124.133:11302","choose game server ip port like as 10.200.124.133:6302")
+	tmp_ipaddr := flag.String("addr","192.168.10.10:6302","choose game server ip port like as 192.168.200.54:10303")
 
-	tmp_rpclogaddr := flag.String("rl","10.200.124.122:1234","log server ip port input like as 10.200.124.122:1234")
-	//tmp_rpclogaddr := flag.String("rl","192.168.10.10:1234","log server ip port input like as 10.200.124.122:1234")
+	//tmp_rpclogaddr := flag.String("rl","10.200.124.122:1234","log server ip port input like as 10.200.124.122:1234")
+	tmp_rpclogaddr := flag.String("rl","192.168.10.10:1234","log server ip port input like as 10.200.124.122:1234")
 
 	tmp_sleep := flag.Int("sleep",10,"每个机器人启动间隔时长")
 	tmp_suspend := flag.Int("st", 5, "轮到自己出牌时暂停的时长 单位是秒")
@@ -163,6 +163,8 @@ func main() {
 	case "tbnn":
 		tbnn.Init_game_protocol()
 		pb_tbnn.NotWriteInit()
+	case "ddz":
+		fmt.Println("斗地主前后端自己定义协议 不需要转换了")
 	default:
 		panic("choose game first")
 	}
@@ -170,7 +172,7 @@ func main() {
 
 	util.SetFrontRobotID(int64(game.BeginAccid))
 
-	go myrpc.Rpclog(game.LogserverAddr)
+	go myrpc.Rpclog(game.LogserverAddr,2)
 
 	var sig sync.WaitGroup
 
