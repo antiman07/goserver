@@ -9,7 +9,7 @@ import (
 var GDB *sql.DB
 
 func init(){
-	db,err := sql.Open("mysql","root:root@/game")
+	db,err := sql.Open("mysql","root:root@/ddz")
 	if err != nil{
 		log.Fatalf("Open database error:%s\n",err)
 	}

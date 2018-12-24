@@ -24,7 +24,7 @@ func Matching_1_loop() {
 				s1 := Matching_queue1.Dequeue()
 				s2 := Matching_queue1.Dequeue()
 				s3 := Matching_queue1.Dequeue()
-				go EnterRoom(1,s1,s2,s3)
+				go EnterRoom(s1,s2,s3)
 			}
 
 		} else {

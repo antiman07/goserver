@@ -1,0 +1,32 @@
+syntax = "proto2";
+package ddz;
+
+import "msg_common.proto";
+
+// 性别
+enum role_sex {
+    man = 0;    // 男
+    woman = 1;  // 女
+}
+
+// 角色信息
+message RoleInfo {
+    required string userid = 1;        // 帐号
+    required string chips = 2;          // 余额
+    required string nickname = 3;       // 玩家昵称
+    required string level = 4;          // 玩家等级
+    required string avatar = 5;         // 玩家头像
+    required role_sex sex = 6;          // 性别
+}
+
+// 终端类型
+enum game_terminal_type {
+	game_terminal_type_reserve = 0;
+    pc = 1;         // PC
+    ios_width = 2;  // IOS横
+    ios_hight = 3;  // IOS竖
+    and_widht = 4;  // android横
+    and_hight = 5;  // android竖
+    ort_wight = 6;  // 其他横
+    ort_hight = 7;  // 其他竖
+}

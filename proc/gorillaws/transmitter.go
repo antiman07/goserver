@@ -7,7 +7,6 @@ import (
 	"github.com/gorilla/websocket"
 	"trunk/cellnet"
 	"trunk/cellnet/codec"
-	"trunk/cellnet/game"
 	"trunk/cellnet/myrpc"
 )
 
@@ -19,7 +18,7 @@ const (
 type WSMessageTransmitter struct {
 }
 
-func (WSMessageTransmitter) OnRecvMessage(ses cellnet.Session) (msg interface{}, err error) {
+/*func (WSMessageTransmitter) OnRecvMessage(ses cellnet.Session) (msg interface{}, err error) {
 
 	conn, ok := ses.Raw().(*websocket.Conn)
 
@@ -54,10 +53,75 @@ func (WSMessageTransmitter) OnRecvMessage(ses cellnet.Session) (msg interface{},
 		msg,_,err = codec.DecodeMessage(cmdid,msgData)
 	}
 	return
+}*/
+
+func (WSMessageTransmitter) OnRecvMessage(ses cellnet.Session) (msg interface{}, err error) {
+
+	conn, ok := ses.Raw().(*websocket.Conn)
+
+	// 转换错误，或者连接已经关闭时退出
+	if !ok || conn == nil {
+		return nil, errors.New("OnRecvMessage conn is nil")
+	}
+
+	var messageType int
+	var raw []byte
+	messageType, raw, err = conn.ReadMessage()
+
+	if err != nil{
+		myrpc.Rpcqueue <- fmt.Sprintf("recv interface error1=%v",err.Error())
+		return nil,err
+	}
+
+	switch messageType {
+	case websocket.BinaryMessage:
+		metadataID := binary.BigEndian.Uint16(raw)
+		msgData := raw[MsgIDSize:]
+
+		msg,_,err = codec.DecodeMessage(int(metadataID),msgData)
+	}
+	return
 }
 
-
 func (WSMessageTransmitter) OnSendMessage(ses cellnet.Session, msg interface{}) error {
+
+	conn, ok := ses.Raw().(*websocket.Conn)
+
+	// 转换错误，或者连接已经关闭时退出
+	if !ok || conn == nil {
+		return errors.New("error conn is nil")
+	}
+
+	var(
+		msgData []byte
+		msgID int
+	)
+	switch m := msg.(type){
+	case *cellnet.RawPacket:
+		msgData = m.MsgData
+		msgID = m.MsgID
+	default:
+		var err error
+		var meta *cellnet.MessageMeta
+		msgData,meta,err = codec.EncodeMessage(msg,nil)
+		if err != nil{
+			return err
+		}
+		msgID = meta.ID
+	}
+
+	pkt := make([]byte,MsgIDSize+len(msgData))
+	binary.BigEndian.PutUint16(pkt,uint16(msgID))
+	copy(pkt[MsgIDSize:],msgData)
+	err := conn.WriteMessage(websocket.BinaryMessage,pkt)
+	if err != nil{
+		myrpc.Rpcqueue <- fmt.Sprintf("send error =%v",err.Error())
+		return err
+	}
+	return nil
+}
+
+/*func (WSMessageTransmitter) OnSendMessage(ses cellnet.Session, msg interface{}) error {
 
 	conn, ok := ses.Raw().(*websocket.Conn)
 
@@ -96,4 +160,4 @@ func (WSMessageTransmitter) OnSendMessage(ses cellnet.Session, msg interface{}) 
 		return err
 	}
 	return nil
-}
+}*/
