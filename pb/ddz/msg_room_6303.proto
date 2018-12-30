@@ -117,10 +117,8 @@ message CheckCardsPush {
 
 // 推送所有人: 阶段操作
 message StagePush {
-    required stage_type stage = 1; //操作阶段
     required uint32 round_time = 2; // 操作时间 秒
     optional uint32 curr_pos = 3;    // 当前操作人的pos
-    optional uint32 round_stage = 4;    //回合阶段标志,1 => 第一回合， 2 => 第二回合
 }
 
 //抢地主
@@ -135,35 +133,48 @@ message RobBankerResp{
 	
 }
 
+//服务端推送3张底牌给地主
+message DipaiPush{
+	required uint32 curr_pos = 1;
+	repeated uint32 cards = 2;
+}
 
 // 玩家操作类型
 enum operation_type {
-    look = 0; // 看牌
-    pass = 1; // 过牌
-    discard = 2; // 弃牌
-    cingl = 3; // 跟注
-    raise = 4; // 加注
-    showhand = 5; // 梭哈
-    sprade = 6; //翻牌
-    check = 7; // 比牌
+    pass = 0; // 过牌
+    doit = 1; // 出牌
+}
+
+enum CARD_TYPE {
+	Notuse            = 0;
+	ROCKET_TYPE 	  = 1; 	//火箭类型
+	ZHADAN_TYPE 	  = 2; 	//炸弹类型
+	DOULEL_INK_TYPE   = 3; 	//双顺类型
+	SINGLE_LINK_TYPE  = 4; 	//单顺类型
+	THREE_ONE_TYPE 	  = 5; 	//三带一类型
+	THREE_TYPE 		  = 6; 	//三牌类型
+	DOUBLE_TYPE 	  = 7; 	//对牌类型
+	SINGLE_TYPE 	  = 8; 	//单牌类型
+}
+
+message CardData{
+	optional uint32 cardtype = 1;
+	optional uint32 cardvalue = 2;
+	optional uint32 extra = 3;
 }
 
 // 玩家的操作 请求
 message OperationReq {
-    required operation_type operation = 1; // 玩家的操作类型
-    optional uint32 value = 2; // 操作附带的值: 4. 加注时为加注筹码倍数; 6. 0 => 第一张暗牌, 1 => 最后一张牌 ..
-}
-
-message LookResp {
-    required uint32 card = 6; // 牌
+	optional uint32 pos = 1;
+    required operation_type operation = 2; // 玩家的操作类型
+    optional CardData data = 3; 
 }
 
 // 推送玩家操作
 message PushPosOperation {
-    required uint32 curr_pos = 1; // 当前出牌人的pos
-    required operation_type operation = 2; // 玩家的操作
-    optional uint32 operation_value = 3; // 操作附带的值: 1. 加注时为加注筹码 ...
-    optional uint32 req_value = 4;  //  请求值, 4. 加注倍数; 5. showhand的值,100 ...
+	optional uint32 pos = 1;       //出牌人ID
+    required operation_type operation = 2; // 玩家的操作类型
+    optional CardData data = 3; 
 }
 
 // 金额信息
@@ -199,4 +210,8 @@ message ReloginInfoResp {
 // 信息
 message RoomCodeResp {
     required room_code code = 1;
+}
+
+message LookResp {
+    required uint32 card = 6; // 牌
 }

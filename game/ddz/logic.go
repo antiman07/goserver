@@ -93,10 +93,45 @@ var ddz_handle = func(ev cellnet.Event){
 
 			ev.Session().Send(&pbddz.RobBankerResp{
 				CurrPos:player.Game.Point,
-				SureRob:false,
+				SureRob:true,//是否选地主
 			})
 		}else{
 			//没轮到自己选地主 选地主按钮变灰
+		}
+	case *pbddz.DipaiPush:
+		if msg.CurrPos == player.Game.Point{
+			//3张底牌是自己的,存起来
+			player.Game.Cardlist = append(player.Game.Cardlist,msg.Cards[0],msg.Cards[1],msg.Cards[2])
+		}else{
+			//UI展示3张底牌
+		}
+	case *pbddz.StagePush:
+		if ev.Message().(*pbddz.StagePush).CurrPos == player.Game.Point {
+			//轮到自己 可以达到超时时间之前出牌 sleep一会
+			l := player.PlayCard()
+			ev.Session().Send(&pbddz.OperationReq{
+				Pos:l.Point,
+				Operation:pbddz.OperationType(l.OperType),
+				Data:&pbddz.CardData{
+					Cardtype:uint32(l.Cardtype),
+					Cardvalue:l.CardValue,
+					Extra:l.Extra,
+				},
+			})
+		}else{
+			//没轮到自己 转圈
+		}
+	case *pbddz.PushPosOperation:
+		//UI展示服务器推送过来的上家出的牌 并保存
+		if msg.Pos == player.Game.Point{
+			preoper := &Previouser{
+				OperType:uint32(msg.Operation),
+				Point:msg.Pos,
+				Cardtype:CARD_TYPE(msg.Data.Cardtype),
+				CardValue:msg.Data.Cardvalue,
+				Extra:msg.Data.Extra,
+			}
+			player.Game.Pre = preoper
 		}
 
 

@@ -269,13 +269,18 @@ func init() {
 	})
 	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{
 		Codec: codec.MustGetCodec("gogopb"),
-		Type:  reflect.TypeOf((*OperationReq)(nil)).Elem(),
-		ID:    37929,
+		Type:  reflect.TypeOf((*DipaiPush)(nil)).Elem(),
+		ID:    35543,
 	})
 	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{
 		Codec: codec.MustGetCodec("gogopb"),
-		Type:  reflect.TypeOf((*LookResp)(nil)).Elem(),
-		ID:    35039,
+		Type:  reflect.TypeOf((*CardData)(nil)).Elem(),
+		ID:    40196,
+	})
+	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{
+		Codec: codec.MustGetCodec("gogopb"),
+		Type:  reflect.TypeOf((*OperationReq)(nil)).Elem(),
+		ID:    37929,
 	})
 	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{
 		Codec: codec.MustGetCodec("gogopb"),
@@ -306,5 +311,10 @@ func init() {
 		Codec: codec.MustGetCodec("gogopb"),
 		Type:  reflect.TypeOf((*RoomCodeResp)(nil)).Elem(),
 		ID:    61314,
+	})
+	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{
+		Codec: codec.MustGetCodec("gogopb"),
+		Type:  reflect.TypeOf((*LookResp)(nil)).Elem(),
+		ID:    35039,
 	})
 }

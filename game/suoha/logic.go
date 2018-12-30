@@ -17,7 +17,6 @@ func init(){
 }
 
 var suoha_handle = func(ev cellnet.Event){
-	//player := ev.Session().Player().(*role.Player)
 	player := ev.Session().Player().(*Suoha_Player)
 
 	switch msg := ev.Message().(type) {
@@ -37,7 +36,7 @@ var suoha_handle = func(ev cellnet.Event){
 
 		go suoha_heartbeat(ev)
 
-		myrpc.Rpcqueue <- fmt.Sprintf("LoginResp playerid=%s",player.Att.Account)
+
 		code := ev.Message().(*suoha.LoginResp).Code
 		if code != 1{
 			myrpc.Rpcqueue <- fmt.Sprintf("error 登陆失败 服务器返回的错误码 %d",code)
@@ -59,6 +58,9 @@ var suoha_handle = func(ev cellnet.Event){
 		player.Att.Ismainwallet = role.IsMainWallet
 		player.Att.Mainwallet = role.MainWallet
 		player.Att.Autowallet = role.AutoWallet
+
+		myrpc.Rpcqueue <- fmt.Sprintf("LoginResp playerid=%s",player.Att.Account)
+
 		ev.Session().Send(&suoha.GetChipsReq{})
 
 	case *suoha.RoomInfoPush:
@@ -73,16 +75,29 @@ var suoha_handle = func(ev cellnet.Event){
 				Limit:v.Limit,
 			}
 			Suoha_RoomInfoList = append(Suoha_RoomInfoList, s)
-
 		}
 
 	case *suoha.ChipsPush:
 		player.Att.Chips = ev.Message().(*suoha.ChipsPush).GetChips()
 		myrpc.Rpcqueue <- fmt.Sprintf("玩家 %s 当前金币数量 %d",player.Att.Account,player.Att.Chips)
 
+		//随机出房间
+		player.Room = util.GenerateRangeNum(1,4)
+		var into_room_id uint32
+		switch player.Room{
+		case 1:
+			into_room_id = 1
+		case 2:
+			into_room_id = 5
+		case 3:
+			into_room_id = 10
+		case 4:
+			into_room_id = 30
+		}
+
 		//开始游戏请求
 		ev.Session().Send(&suoha.StartMatchReq{
-			Type:10,
+			Type:into_room_id,
 		})
 
 	case *suoha.StartMatchResp:
@@ -93,8 +108,12 @@ var suoha_handle = func(ev cellnet.Event){
 				player.Att.Chips,result)
 		}else{
 			player.CalcTimes(6)
-			//myrpc.Rpcqueue <- fmt.Sprintf("玩家%s 成功开始新一轮游戏",player.Att.Account)
+			player.CalcRooms(uint32(player.Room))
+			myrpc.Rpcqueue <- fmt.Sprintf("%s进入房间",player.Att.Account)
 		}
+
+	case *suoha.LeaveRoomPush:
+		myrpc.Rpcqueue <- fmt.Sprintf("%s离开房间",player.Att.Account)
 
 	case *suoha.PushRoomInfo:
 		player.Pos = ev.Message().(*suoha.PushRoomInfo).GetSelfPos()
@@ -102,7 +121,6 @@ var suoha_handle = func(ev cellnet.Event){
 
 	case *suoha.StagePush:
 		if ev.Message().(*suoha.StagePush).CurrPos == player.Pos{
-
 			//有界面的话 此刻展示UI出牌倒计时效果
 			randtime := util.GenerateRangeNum(1,game.BetmultiTime)
 			time.Sleep(time.Second * time.Duration(randtime))
@@ -112,49 +130,89 @@ var suoha_handle = func(ev cellnet.Event){
 			//去掉梭哈 不然短时间玩家金币输光 不能持续进入游戏
 			//which_operator := util.GenerateRangeNum(int(suoha.OperationType_pass),int(suoha.OperationType_showhand))
 			which_operator := util.GenerateRangeNum(int(suoha.OperationType_pass),int(suoha.OperationType_raise))
-			player.CalcTimes(suoha.OperationType(which_operator))
+
 			if player.Previous.CurrPos != 0{
 				if which_operator == int(suoha.OperationType_cingl){
+					// begin 根据前一个玩家出牌 跟随之
+					switch suoha.OperationType(player.Previous.Operation){
+					case suoha.OperationType_pass:
+						player.CalcTimes(suoha.OperationType_pass)
+						player.RoomOperList[player.Room].Passtimes += 1
+					case suoha.OperationType_discard:
+						player.CalcTimes(suoha.OperationType_discard)
+						player.RoomOperList[player.Room].Discardtimes += 1
+					case suoha.OperationType_cingl:
+						player.CalcTimes(suoha.OperationType_cingl)
+						player.RoomOperList[player.Room].Cingltimes += 1
+					case suoha.OperationType_raise:
+						player.CalcTimes(suoha.OperationType_raise)
+						player.RoomOperList[player.Room].Raisetimes += 1
+					}
+					//end
+
 					//如果随机到跟注操作 就跟进上一家
 					ev.Session().Send(&suoha.OperationReq{Operation:player.Previous.Operation,
 						Value:player.Previous.ReqValue})
-					//myrpc.Rpcqueue <- fmt.Sprintf("玩家 %s 随机跟注前面玩家操作,类型是%d",player.Att.Account,player.Previous.Operation)
+
 				}else if which_operator == int(suoha.OperationType_raise){
+					player.CalcTimes(suoha.OperationType_raise)
+					player.RoomOperList[player.Room].Raisetimes += 1
 					//如果随机到加注操作 就默认2倍
 					ev.Session().Send(&suoha.OperationReq{Operation:suoha.OperationType_raise,
 						Value:2,
 					})
-					//myrpc.Rpcqueue <- fmt.Sprintf("玩家　%s 随机到加注操作,默认2倍",player.Att.Account)
+
 				}else{
 					//其他操作 Value值无意义
+					// begin
+					player.CalcTimes(suoha.OperationType(which_operator))
+
+					switch suoha.OperationType(which_operator){
+					case suoha.OperationType_pass:
+						player.RoomOperList[player.Room].Passtimes += 1
+					case suoha.OperationType_discard:
+						player.RoomOperList[player.Room].Discardtimes += 1
+					case suoha.OperationType_cingl:
+						player.RoomOperList[player.Room].Cingltimes += 1
+					case suoha.OperationType_raise:
+						player.RoomOperList[player.Room].Raisetimes += 1
+					}
+					//end
+
 					ev.Session().Send(&suoha.OperationReq{
 						Operation:suoha.OperationType(which_operator),
 						Value:0,
 					})
-
-					//myrpc.Rpcqueue <- fmt.Sprintf("玩家 %s 随机到%d类型操作",player.Att.Account,which_operator)
 				}
 
 			}else{
 				//新开局游戏 并且第一轮自己先出牌(在过牌,弃牌,跟注,加注,梭哈中随机选择一种操作方式)
+				player.CalcTimes(suoha.OperationType(which_operator))
+
 				if which_operator == int(suoha.OperationType_raise) {
+					player.RoomOperList[player.Room].Raisetimes += 1
 					//是加注 就默认2倍
 					ev.Session().Send(&suoha.OperationReq{Operation:suoha.OperationType_raise,
 						Value:2,
 					})
-
-					//myrpc.Rpcqueue <- fmt.Sprintf("玩家 %s 新开局自己先出牌,随机到加注操作,默认2倍",player.Att.Account)
-
 				}else{
+					// begin
+					switch suoha.OperationType(which_operator){
+					case suoha.OperationType_pass:
+						player.RoomOperList[player.Room].Passtimes += 1
+					case suoha.OperationType_discard:
+						player.RoomOperList[player.Room].Discardtimes += 1
+					case suoha.OperationType_cingl:
+						player.RoomOperList[player.Room].Cingltimes += 1
+					}
+					//end
+
 					//其他操作 Value值无意义
 					ev.Session().Send(&suoha.OperationReq{
 						Operation:suoha.OperationType(which_operator),
 						Value:0,
 					})
-
-					//myrpc.Rpcqueue <- fmt.Sprintf("玩家 %s 新开局自己先出牌,随机到%d类型操作",player.Att.Account,which_operator)
 				}
-
 			}
 		}
 
@@ -194,12 +252,12 @@ var suoha_handle = func(ev cellnet.Event){
 	case *suoha.ReloginInfoResp:
 	case *suoha.RoomCodeResp:
 		//重连会发这些包过来 end
+
 	default:
-		fmt.Println("未知消息",msg)
-		myrpc.Rpcqueue <- fmt.Sprintf("error 未知消息 %v",msg)
+		fmt.Printf("未知消息%+v",ev.Message(),msg)
+		myrpc.Rpcqueue <- fmt.Sprintf("error 未知消息 %v",ev.Message())
 	}
 }
-
 
 func suoha_login(ev cellnet.Event,account int64){
 
@@ -217,7 +275,6 @@ func suoha_heartbeat(ev interface{}) {
 
 	ll := ev.(cellnet.Event)
 	session := ll.Session()
-
 	for {
 		conn, ok := session.Raw().(*websocket.Conn)
 		if !ok || conn == nil {

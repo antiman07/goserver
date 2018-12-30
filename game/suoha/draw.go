@@ -18,9 +18,10 @@ func Init_game_protocol(){
 		metadata := meta //这句话必须要 赋值给临时变量 网上搜range陷阱
 		protocolname := name[strings.Index(name,".")+1 : len(name)]
 		if msgid,ok := protocolmap[protocolname];ok{
+			fmt.Printf("msgid=%d,metaid=%d,msg=%s\n",msgid,metadata.ID,protocolname)
 			game.ConvertMsgID[metadata.ID] =  msgid //映射 自动生成的meteID ---> 服务器端指定的ID
 		}else{
-			fmt.Sprintf("%s protocol not regedit",protocolname)
+			fmt.Printf("%s protocol not regedit\n",protocolname)
 		}
 	}
 }

@@ -20,7 +20,7 @@ func Init_game_protocol(){
 		if msgid,ok := protocolmap[protocolname];ok{
 			game.ConvertMsgID[metadata.ID] =  msgid //映射 自动生成的meteID ---> 服务器端指定的ID
 		}else{
-			fmt.Sprintf("%s protocol not regedit",protocolname)
+			fmt.Printf("%s protocol not regedit",protocolname)
 		}
 	}
 }

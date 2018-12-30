@@ -29,6 +29,7 @@ enum lobby_code {
     chips_not_enough = 3;   // 筹码不够
     chips_up_limit = 4;     // 筹码超过上限
     already_in_queue = 5;   // 已经在队列中
+    notice = 6;       // 停服公告
 }
 
 message RoomInfo {

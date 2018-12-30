@@ -73,7 +73,7 @@ func (x *StageType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 func (StageType) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{0}
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{0}
 }
 
 type RoomCode int32
@@ -109,42 +109,24 @@ func (x *RoomCode) UnmarshalJSON(data []byte) error {
 	return nil
 }
 func (RoomCode) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{1}
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{1}
 }
 
 // 玩家操作类型
 type OperationType int32
 
 const (
-	OperationType_look     OperationType = 0
-	OperationType_pass     OperationType = 1
-	OperationType_discard  OperationType = 2
-	OperationType_cingl    OperationType = 3
-	OperationType_raise    OperationType = 4
-	OperationType_showhand OperationType = 5
-	OperationType_sprade   OperationType = 6
-	OperationType_check    OperationType = 7
+	OperationType_pass OperationType = 0
+	OperationType_doit OperationType = 1
 )
 
 var OperationType_name = map[int32]string{
-	0: "look",
-	1: "pass",
-	2: "discard",
-	3: "cingl",
-	4: "raise",
-	5: "showhand",
-	6: "sprade",
-	7: "check",
+	0: "pass",
+	1: "doit",
 }
 var OperationType_value = map[string]int32{
-	"look":     0,
-	"pass":     1,
-	"discard":  2,
-	"cingl":    3,
-	"raise":    4,
-	"showhand": 5,
-	"sprade":   6,
-	"check":    7,
+	"pass": 0,
+	"doit": 1,
 }
 
 func (x OperationType) Enum() *OperationType {
@@ -164,7 +146,64 @@ func (x *OperationType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 func (OperationType) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{2}
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{2}
+}
+
+type CARD_TYPE int32
+
+const (
+	CARD_TYPE_Notuse           CARD_TYPE = 0
+	CARD_TYPE_ROCKET_TYPE      CARD_TYPE = 1
+	CARD_TYPE_ZHADAN_TYPE      CARD_TYPE = 2
+	CARD_TYPE_DOULEL_INK_TYPE  CARD_TYPE = 3
+	CARD_TYPE_SINGLE_LINK_TYPE CARD_TYPE = 4
+	CARD_TYPE_THREE_ONE_TYPE   CARD_TYPE = 5
+	CARD_TYPE_THREE_TYPE       CARD_TYPE = 6
+	CARD_TYPE_DOUBLE_TYPE      CARD_TYPE = 7
+	CARD_TYPE_SINGLE_TYPE      CARD_TYPE = 8
+)
+
+var CARD_TYPE_name = map[int32]string{
+	0: "Notuse",
+	1: "ROCKET_TYPE",
+	2: "ZHADAN_TYPE",
+	3: "DOULEL_INK_TYPE",
+	4: "SINGLE_LINK_TYPE",
+	5: "THREE_ONE_TYPE",
+	6: "THREE_TYPE",
+	7: "DOUBLE_TYPE",
+	8: "SINGLE_TYPE",
+}
+var CARD_TYPE_value = map[string]int32{
+	"Notuse":           0,
+	"ROCKET_TYPE":      1,
+	"ZHADAN_TYPE":      2,
+	"DOULEL_INK_TYPE":  3,
+	"SINGLE_LINK_TYPE": 4,
+	"THREE_ONE_TYPE":   5,
+	"THREE_TYPE":       6,
+	"DOUBLE_TYPE":      7,
+	"SINGLE_TYPE":      8,
+}
+
+func (x CARD_TYPE) Enum() *CARD_TYPE {
+	p := new(CARD_TYPE)
+	*p = x
+	return p
+}
+func (x CARD_TYPE) String() string {
+	return proto.EnumName(CARD_TYPE_name, int32(x))
+}
+func (x *CARD_TYPE) UnmarshalJSON(data []byte) error {
+	value, err := proto.UnmarshalJSONEnum(CARD_TYPE_value, data, "CARD_TYPE")
+	if err != nil {
+		return err
+	}
+	*x = CARD_TYPE(value)
+	return nil
+}
+func (CARD_TYPE) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{3}
 }
 
 // 推送房间信息
@@ -177,7 +216,7 @@ func (m *PushRoomInfo) Reset()         { *m = PushRoomInfo{} }
 func (m *PushRoomInfo) String() string { return proto.CompactTextString(m) }
 func (*PushRoomInfo) ProtoMessage()    {}
 func (*PushRoomInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{0}
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{0}
 }
 func (m *PushRoomInfo) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -240,7 +279,7 @@ func (m *SeatInfo) Reset()         { *m = SeatInfo{} }
 func (m *SeatInfo) String() string { return proto.CompactTextString(m) }
 func (*SeatInfo) ProtoMessage()    {}
 func (*SeatInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{1}
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{1}
 }
 func (m *SeatInfo) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -364,7 +403,7 @@ func (m *CardInfo) Reset()         { *m = CardInfo{} }
 func (m *CardInfo) String() string { return proto.CompactTextString(m) }
 func (*CardInfo) ProtoMessage()    {}
 func (*CardInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{2}
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{2}
 }
 func (m *CardInfo) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -422,7 +461,7 @@ func (m *BaseChipsPush) Reset()         { *m = BaseChipsPush{} }
 func (m *BaseChipsPush) String() string { return proto.CompactTextString(m) }
 func (*BaseChipsPush) ProtoMessage()    {}
 func (*BaseChipsPush) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{3}
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{3}
 }
 func (m *BaseChipsPush) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -467,7 +506,7 @@ func (m *DealCardsPush) Reset()         { *m = DealCardsPush{} }
 func (m *DealCardsPush) String() string { return proto.CompactTextString(m) }
 func (*DealCardsPush) ProtoMessage()    {}
 func (*DealCardsPush) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{4}
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{4}
 }
 func (m *DealCardsPush) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -513,7 +552,7 @@ func (m *FinalDealResp) Reset()         { *m = FinalDealResp{} }
 func (m *FinalDealResp) String() string { return proto.CompactTextString(m) }
 func (*FinalDealResp) ProtoMessage()    {}
 func (*FinalDealResp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{5}
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{5}
 }
 func (m *FinalDealResp) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -567,7 +606,7 @@ func (m *SpreadInfo) Reset()         { *m = SpreadInfo{} }
 func (m *SpreadInfo) String() string { return proto.CompactTextString(m) }
 func (*SpreadInfo) ProtoMessage()    {}
 func (*SpreadInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{6}
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{6}
 }
 func (m *SpreadInfo) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -626,7 +665,7 @@ func (m *SpreadCardsPush) Reset()         { *m = SpreadCardsPush{} }
 func (m *SpreadCardsPush) String() string { return proto.CompactTextString(m) }
 func (*SpreadCardsPush) ProtoMessage()    {}
 func (*SpreadCardsPush) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{7}
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{7}
 }
 func (m *SpreadCardsPush) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -671,7 +710,7 @@ func (m *CheckCardsPush) Reset()         { *m = CheckCardsPush{} }
 func (m *CheckCardsPush) String() string { return proto.CompactTextString(m) }
 func (*CheckCardsPush) ProtoMessage()    {}
 func (*CheckCardsPush) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{8}
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{8}
 }
 func (m *CheckCardsPush) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -709,17 +748,15 @@ func (m *CheckCardsPush) GetInfo() []*CardInfo {
 
 // 推送所有人: 阶段操作
 type StagePush struct {
-	Stage      StageType `protobuf:"varint,1,req,name=stage,enum=ddz.StageType" json:"stage"`
-	RoundTime  uint32    `protobuf:"varint,2,req,name=round_time,json=roundTime" json:"round_time"`
-	CurrPos    uint32    `protobuf:"varint,3,opt,name=curr_pos,json=currPos" json:"curr_pos"`
-	RoundStage uint32    `protobuf:"varint,4,opt,name=round_stage,json=roundStage" json:"round_stage"`
+	RoundTime uint32 `protobuf:"varint,2,req,name=round_time,json=roundTime" json:"round_time"`
+	CurrPos   uint32 `protobuf:"varint,3,opt,name=curr_pos,json=currPos" json:"curr_pos"`
 }
 
 func (m *StagePush) Reset()         { *m = StagePush{} }
 func (m *StagePush) String() string { return proto.CompactTextString(m) }
 func (*StagePush) ProtoMessage()    {}
 func (*StagePush) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{9}
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{9}
 }
 func (m *StagePush) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -748,13 +785,6 @@ func (m *StagePush) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_StagePush proto.InternalMessageInfo
 
-func (m *StagePush) GetStage() StageType {
-	if m != nil {
-		return m.Stage
-	}
-	return StageType_room_6303_reverse
-}
-
 func (m *StagePush) GetRoundTime() uint32 {
 	if m != nil {
 		return m.RoundTime
@@ -769,13 +799,6 @@ func (m *StagePush) GetCurrPos() uint32 {
 	return 0
 }
 
-func (m *StagePush) GetRoundStage() uint32 {
-	if m != nil {
-		return m.RoundStage
-	}
-	return 0
-}
-
 // 抢地主
 type RobBankerOper struct {
 	CurrPos   uint32 `protobuf:"varint,1,req,name=curr_pos,json=currPos" json:"curr_pos"`
@@ -786,7 +809,7 @@ func (m *RobBankerOper) Reset()         { *m = RobBankerOper{} }
 func (m *RobBankerOper) String() string { return proto.CompactTextString(m) }
 func (*RobBankerOper) ProtoMessage()    {}
 func (*RobBankerOper) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{10}
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{10}
 }
 func (m *RobBankerOper) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -838,7 +861,7 @@ func (m *RobBankerResp) Reset()         { *m = RobBankerResp{} }
 func (m *RobBankerResp) String() string { return proto.CompactTextString(m) }
 func (*RobBankerResp) ProtoMessage()    {}
 func (*RobBankerResp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{11}
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{11}
 }
 func (m *RobBankerResp) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -881,17 +904,131 @@ func (m *RobBankerResp) GetSureRob() bool {
 	return false
 }
 
+// 服务端推送3张底牌给地主
+type DipaiPush struct {
+	CurrPos uint32   `protobuf:"varint,1,req,name=curr_pos,json=currPos" json:"curr_pos"`
+	Cards   []uint32 `protobuf:"varint,2,rep,name=cards" json:"cards,omitempty"`
+}
+
+func (m *DipaiPush) Reset()         { *m = DipaiPush{} }
+func (m *DipaiPush) String() string { return proto.CompactTextString(m) }
+func (*DipaiPush) ProtoMessage()    {}
+func (*DipaiPush) Descriptor() ([]byte, []int) {
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{12}
+}
+func (m *DipaiPush) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *DipaiPush) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_DipaiPush.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *DipaiPush) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DipaiPush.Merge(dst, src)
+}
+func (m *DipaiPush) XXX_Size() int {
+	return m.Size()
+}
+func (m *DipaiPush) XXX_DiscardUnknown() {
+	xxx_messageInfo_DipaiPush.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DipaiPush proto.InternalMessageInfo
+
+func (m *DipaiPush) GetCurrPos() uint32 {
+	if m != nil {
+		return m.CurrPos
+	}
+	return 0
+}
+
+func (m *DipaiPush) GetCards() []uint32 {
+	if m != nil {
+		return m.Cards
+	}
+	return nil
+}
+
+type CardData struct {
+	Cardtype  uint32 `protobuf:"varint,1,opt,name=cardtype" json:"cardtype"`
+	Cardvalue uint32 `protobuf:"varint,2,opt,name=cardvalue" json:"cardvalue"`
+	Extra     uint32 `protobuf:"varint,3,opt,name=extra" json:"extra"`
+}
+
+func (m *CardData) Reset()         { *m = CardData{} }
+func (m *CardData) String() string { return proto.CompactTextString(m) }
+func (*CardData) ProtoMessage()    {}
+func (*CardData) Descriptor() ([]byte, []int) {
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{13}
+}
+func (m *CardData) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *CardData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_CardData.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *CardData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CardData.Merge(dst, src)
+}
+func (m *CardData) XXX_Size() int {
+	return m.Size()
+}
+func (m *CardData) XXX_DiscardUnknown() {
+	xxx_messageInfo_CardData.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CardData proto.InternalMessageInfo
+
+func (m *CardData) GetCardtype() uint32 {
+	if m != nil {
+		return m.Cardtype
+	}
+	return 0
+}
+
+func (m *CardData) GetCardvalue() uint32 {
+	if m != nil {
+		return m.Cardvalue
+	}
+	return 0
+}
+
+func (m *CardData) GetExtra() uint32 {
+	if m != nil {
+		return m.Extra
+	}
+	return 0
+}
+
 // 玩家的操作 请求
 type OperationReq struct {
-	Operation OperationType `protobuf:"varint,1,req,name=operation,enum=ddz.OperationType" json:"operation"`
-	Value     uint32        `protobuf:"varint,2,opt,name=value" json:"value"`
+	Pos       uint32        `protobuf:"varint,1,opt,name=pos" json:"pos"`
+	Operation OperationType `protobuf:"varint,2,req,name=operation,enum=ddz.OperationType" json:"operation"`
+	Data      *CardData     `protobuf:"bytes,3,opt,name=data" json:"data,omitempty"`
 }
 
 func (m *OperationReq) Reset()         { *m = OperationReq{} }
 func (m *OperationReq) String() string { return proto.CompactTextString(m) }
 func (*OperationReq) ProtoMessage()    {}
 func (*OperationReq) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{12}
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{14}
 }
 func (m *OperationReq) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -920,77 +1057,39 @@ func (m *OperationReq) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_OperationReq proto.InternalMessageInfo
 
+func (m *OperationReq) GetPos() uint32 {
+	if m != nil {
+		return m.Pos
+	}
+	return 0
+}
+
 func (m *OperationReq) GetOperation() OperationType {
 	if m != nil {
 		return m.Operation
 	}
-	return OperationType_look
+	return OperationType_pass
 }
 
-func (m *OperationReq) GetValue() uint32 {
+func (m *OperationReq) GetData() *CardData {
 	if m != nil {
-		return m.Value
+		return m.Data
 	}
-	return 0
-}
-
-type LookResp struct {
-	Card uint32 `protobuf:"varint,6,req,name=card" json:"card"`
-}
-
-func (m *LookResp) Reset()         { *m = LookResp{} }
-func (m *LookResp) String() string { return proto.CompactTextString(m) }
-func (*LookResp) ProtoMessage()    {}
-func (*LookResp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{13}
-}
-func (m *LookResp) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *LookResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_LookResp.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (dst *LookResp) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_LookResp.Merge(dst, src)
-}
-func (m *LookResp) XXX_Size() int {
-	return m.Size()
-}
-func (m *LookResp) XXX_DiscardUnknown() {
-	xxx_messageInfo_LookResp.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_LookResp proto.InternalMessageInfo
-
-func (m *LookResp) GetCard() uint32 {
-	if m != nil {
-		return m.Card
-	}
-	return 0
+	return nil
 }
 
 // 推送玩家操作
 type PushPosOperation struct {
-	CurrPos        uint32        `protobuf:"varint,1,req,name=curr_pos,json=currPos" json:"curr_pos"`
-	Operation      OperationType `protobuf:"varint,2,req,name=operation,enum=ddz.OperationType" json:"operation"`
-	OperationValue uint32        `protobuf:"varint,3,opt,name=operation_value,json=operationValue" json:"operation_value"`
-	ReqValue       uint32        `protobuf:"varint,4,opt,name=req_value,json=reqValue" json:"req_value"`
+	Pos       uint32        `protobuf:"varint,1,opt,name=pos" json:"pos"`
+	Operation OperationType `protobuf:"varint,2,req,name=operation,enum=ddz.OperationType" json:"operation"`
+	Data      *CardData     `protobuf:"bytes,3,opt,name=data" json:"data,omitempty"`
 }
 
 func (m *PushPosOperation) Reset()         { *m = PushPosOperation{} }
 func (m *PushPosOperation) String() string { return proto.CompactTextString(m) }
 func (*PushPosOperation) ProtoMessage()    {}
 func (*PushPosOperation) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{14}
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{15}
 }
 func (m *PushPosOperation) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1019,9 +1118,9 @@ func (m *PushPosOperation) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_PushPosOperation proto.InternalMessageInfo
 
-func (m *PushPosOperation) GetCurrPos() uint32 {
+func (m *PushPosOperation) GetPos() uint32 {
 	if m != nil {
-		return m.CurrPos
+		return m.Pos
 	}
 	return 0
 }
@@ -1030,21 +1129,14 @@ func (m *PushPosOperation) GetOperation() OperationType {
 	if m != nil {
 		return m.Operation
 	}
-	return OperationType_look
+	return OperationType_pass
 }
 
-func (m *PushPosOperation) GetOperationValue() uint32 {
+func (m *PushPosOperation) GetData() *CardData {
 	if m != nil {
-		return m.OperationValue
+		return m.Data
 	}
-	return 0
-}
-
-func (m *PushPosOperation) GetReqValue() uint32 {
-	if m != nil {
-		return m.ReqValue
-	}
-	return 0
+	return nil
 }
 
 // 金额信息
@@ -1058,7 +1150,7 @@ func (m *ChipsInfo) Reset()         { *m = ChipsInfo{} }
 func (m *ChipsInfo) String() string { return proto.CompactTextString(m) }
 func (*ChipsInfo) ProtoMessage()    {}
 func (*ChipsInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{15}
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{16}
 }
 func (m *ChipsInfo) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1117,7 +1209,7 @@ func (m *SettleChipsPush) Reset()         { *m = SettleChipsPush{} }
 func (m *SettleChipsPush) String() string { return proto.CompactTextString(m) }
 func (*SettleChipsPush) ProtoMessage()    {}
 func (*SettleChipsPush) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{16}
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{17}
 }
 func (m *SettleChipsPush) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1162,7 +1254,7 @@ func (m *LeaveRoomPush) Reset()         { *m = LeaveRoomPush{} }
 func (m *LeaveRoomPush) String() string { return proto.CompactTextString(m) }
 func (*LeaveRoomPush) ProtoMessage()    {}
 func (*LeaveRoomPush) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{17}
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{18}
 }
 func (m *LeaveRoomPush) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1215,7 +1307,7 @@ func (m *ReloginInfoResp) Reset()         { *m = ReloginInfoResp{} }
 func (m *ReloginInfoResp) String() string { return proto.CompactTextString(m) }
 func (*ReloginInfoResp) ProtoMessage()    {}
 func (*ReloginInfoResp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{18}
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{19}
 }
 func (m *ReloginInfoResp) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1323,7 +1415,7 @@ func (m *RoomCodeResp) Reset()         { *m = RoomCodeResp{} }
 func (m *RoomCodeResp) String() string { return proto.CompactTextString(m) }
 func (*RoomCodeResp) ProtoMessage()    {}
 func (*RoomCodeResp) Descriptor() ([]byte, []int) {
-	return fileDescriptor_msg_room_6303_e6c5152fae35ae3f, []int{19}
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{20}
 }
 func (m *RoomCodeResp) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -1359,6 +1451,50 @@ func (m *RoomCodeResp) GetCode() RoomCode {
 	return RoomCode_room_code_reverse
 }
 
+type LookResp struct {
+	Card uint32 `protobuf:"varint,6,req,name=card" json:"card"`
+}
+
+func (m *LookResp) Reset()         { *m = LookResp{} }
+func (m *LookResp) String() string { return proto.CompactTextString(m) }
+func (*LookResp) ProtoMessage()    {}
+func (*LookResp) Descriptor() ([]byte, []int) {
+	return fileDescriptor_msg_room_6303_61c395a402ec7c01, []int{21}
+}
+func (m *LookResp) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *LookResp) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_LookResp.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *LookResp) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_LookResp.Merge(dst, src)
+}
+func (m *LookResp) XXX_Size() int {
+	return m.Size()
+}
+func (m *LookResp) XXX_DiscardUnknown() {
+	xxx_messageInfo_LookResp.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_LookResp proto.InternalMessageInfo
+
+func (m *LookResp) GetCard() uint32 {
+	if m != nil {
+		return m.Card
+	}
+	return 0
+}
+
 func init() {
 	proto.RegisterType((*PushRoomInfo)(nil), "ddz.PushRoomInfo")
 	proto.RegisterType((*SeatInfo)(nil), "ddz.SeatInfo")
@@ -1372,17 +1508,20 @@ func init() {
 	proto.RegisterType((*StagePush)(nil), "ddz.StagePush")
 	proto.RegisterType((*RobBankerOper)(nil), "ddz.RobBankerOper")
 	proto.RegisterType((*RobBankerResp)(nil), "ddz.RobBankerResp")
+	proto.RegisterType((*DipaiPush)(nil), "ddz.DipaiPush")
+	proto.RegisterType((*CardData)(nil), "ddz.CardData")
 	proto.RegisterType((*OperationReq)(nil), "ddz.OperationReq")
-	proto.RegisterType((*LookResp)(nil), "ddz.LookResp")
 	proto.RegisterType((*PushPosOperation)(nil), "ddz.PushPosOperation")
 	proto.RegisterType((*ChipsInfo)(nil), "ddz.ChipsInfo")
 	proto.RegisterType((*SettleChipsPush)(nil), "ddz.SettleChipsPush")
 	proto.RegisterType((*LeaveRoomPush)(nil), "ddz.LeaveRoomPush")
 	proto.RegisterType((*ReloginInfoResp)(nil), "ddz.ReloginInfoResp")
 	proto.RegisterType((*RoomCodeResp)(nil), "ddz.RoomCodeResp")
+	proto.RegisterType((*LookResp)(nil), "ddz.LookResp")
 	proto.RegisterEnum("ddz.StageType", StageType_name, StageType_value)
 	proto.RegisterEnum("ddz.RoomCode", RoomCode_name, RoomCode_value)
 	proto.RegisterEnum("ddz.OperationType", OperationType_name, OperationType_value)
+	proto.RegisterEnum("ddz.CARD_TYPE", CARD_TYPE_name, CARD_TYPE_value)
 }
 func (m *PushRoomInfo) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
@@ -1703,18 +1842,12 @@ func (m *StagePush) MarshalTo(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	dAtA[i] = 0x8
-	i++
-	i = encodeVarintMsgRoom_6303(dAtA, i, uint64(m.Stage))
 	dAtA[i] = 0x10
 	i++
 	i = encodeVarintMsgRoom_6303(dAtA, i, uint64(m.RoundTime))
 	dAtA[i] = 0x18
 	i++
 	i = encodeVarintMsgRoom_6303(dAtA, i, uint64(m.CurrPos))
-	dAtA[i] = 0x20
-	i++
-	i = encodeVarintMsgRoom_6303(dAtA, i, uint64(m.RoundStage))
 	return i, nil
 }
 
@@ -1771,6 +1904,61 @@ func (m *RobBankerResp) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
+func (m *DipaiPush) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *DipaiPush) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	dAtA[i] = 0x8
+	i++
+	i = encodeVarintMsgRoom_6303(dAtA, i, uint64(m.CurrPos))
+	if len(m.Cards) > 0 {
+		for _, num := range m.Cards {
+			dAtA[i] = 0x10
+			i++
+			i = encodeVarintMsgRoom_6303(dAtA, i, uint64(num))
+		}
+	}
+	return i, nil
+}
+
+func (m *CardData) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *CardData) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	dAtA[i] = 0x8
+	i++
+	i = encodeVarintMsgRoom_6303(dAtA, i, uint64(m.Cardtype))
+	dAtA[i] = 0x10
+	i++
+	i = encodeVarintMsgRoom_6303(dAtA, i, uint64(m.Cardvalue))
+	dAtA[i] = 0x18
+	i++
+	i = encodeVarintMsgRoom_6303(dAtA, i, uint64(m.Extra))
+	return i, nil
+}
+
 func (m *OperationReq) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -1788,31 +1976,20 @@ func (m *OperationReq) MarshalTo(dAtA []byte) (int, error) {
 	_ = l
 	dAtA[i] = 0x8
 	i++
-	i = encodeVarintMsgRoom_6303(dAtA, i, uint64(m.Operation))
+	i = encodeVarintMsgRoom_6303(dAtA, i, uint64(m.Pos))
 	dAtA[i] = 0x10
 	i++
-	i = encodeVarintMsgRoom_6303(dAtA, i, uint64(m.Value))
-	return i, nil
-}
-
-func (m *LookResp) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
-	if err != nil {
-		return nil, err
+	i = encodeVarintMsgRoom_6303(dAtA, i, uint64(m.Operation))
+	if m.Data != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintMsgRoom_6303(dAtA, i, uint64(m.Data.Size()))
+		n2, err := m.Data.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n2
 	}
-	return dAtA[:n], nil
-}
-
-func (m *LookResp) MarshalTo(dAtA []byte) (int, error) {
-	var i int
-	_ = i
-	var l int
-	_ = l
-	dAtA[i] = 0x30
-	i++
-	i = encodeVarintMsgRoom_6303(dAtA, i, uint64(m.Card))
 	return i, nil
 }
 
@@ -1833,16 +2010,20 @@ func (m *PushPosOperation) MarshalTo(dAtA []byte) (int, error) {
 	_ = l
 	dAtA[i] = 0x8
 	i++
-	i = encodeVarintMsgRoom_6303(dAtA, i, uint64(m.CurrPos))
+	i = encodeVarintMsgRoom_6303(dAtA, i, uint64(m.Pos))
 	dAtA[i] = 0x10
 	i++
 	i = encodeVarintMsgRoom_6303(dAtA, i, uint64(m.Operation))
-	dAtA[i] = 0x18
-	i++
-	i = encodeVarintMsgRoom_6303(dAtA, i, uint64(m.OperationValue))
-	dAtA[i] = 0x20
-	i++
-	i = encodeVarintMsgRoom_6303(dAtA, i, uint64(m.ReqValue))
+	if m.Data != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintMsgRoom_6303(dAtA, i, uint64(m.Data.Size()))
+		n3, err := m.Data.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n3
+	}
 	return i, nil
 }
 
@@ -2006,6 +2187,27 @@ func (m *RoomCodeResp) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
+func (m *LookResp) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *LookResp) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	dAtA[i] = 0x30
+	i++
+	i = encodeVarintMsgRoom_6303(dAtA, i, uint64(m.Card))
+	return i, nil
+}
+
 func encodeVarintMsgRoom_6303(dAtA []byte, offset int, v uint64) int {
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
@@ -2160,10 +2362,8 @@ func (m *StagePush) Size() (n int) {
 	}
 	var l int
 	_ = l
-	n += 1 + sovMsgRoom_6303(uint64(m.Stage))
 	n += 1 + sovMsgRoom_6303(uint64(m.RoundTime))
 	n += 1 + sovMsgRoom_6303(uint64(m.CurrPos))
-	n += 1 + sovMsgRoom_6303(uint64(m.RoundStage))
 	return n
 }
 
@@ -2189,24 +2389,45 @@ func (m *RobBankerResp) Size() (n int) {
 	return n
 }
 
+func (m *DipaiPush) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	n += 1 + sovMsgRoom_6303(uint64(m.CurrPos))
+	if len(m.Cards) > 0 {
+		for _, e := range m.Cards {
+			n += 1 + sovMsgRoom_6303(uint64(e))
+		}
+	}
+	return n
+}
+
+func (m *CardData) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	n += 1 + sovMsgRoom_6303(uint64(m.Cardtype))
+	n += 1 + sovMsgRoom_6303(uint64(m.Cardvalue))
+	n += 1 + sovMsgRoom_6303(uint64(m.Extra))
+	return n
+}
+
 func (m *OperationReq) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
+	n += 1 + sovMsgRoom_6303(uint64(m.Pos))
 	n += 1 + sovMsgRoom_6303(uint64(m.Operation))
-	n += 1 + sovMsgRoom_6303(uint64(m.Value))
-	return n
-}
-
-func (m *LookResp) Size() (n int) {
-	if m == nil {
-		return 0
+	if m.Data != nil {
+		l = m.Data.Size()
+		n += 1 + l + sovMsgRoom_6303(uint64(l))
 	}
-	var l int
-	_ = l
-	n += 1 + sovMsgRoom_6303(uint64(m.Card))
 	return n
 }
 
@@ -2216,10 +2437,12 @@ func (m *PushPosOperation) Size() (n int) {
 	}
 	var l int
 	_ = l
-	n += 1 + sovMsgRoom_6303(uint64(m.CurrPos))
+	n += 1 + sovMsgRoom_6303(uint64(m.Pos))
 	n += 1 + sovMsgRoom_6303(uint64(m.Operation))
-	n += 1 + sovMsgRoom_6303(uint64(m.OperationValue))
-	n += 1 + sovMsgRoom_6303(uint64(m.ReqValue))
+	if m.Data != nil {
+		l = m.Data.Size()
+		n += 1 + l + sovMsgRoom_6303(uint64(l))
+	}
 	return n
 }
 
@@ -2295,6 +2518,16 @@ func (m *RoomCodeResp) Size() (n int) {
 	var l int
 	_ = l
 	n += 1 + sovMsgRoom_6303(uint64(m.Code))
+	return n
+}
+
+func (m *LookResp) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	n += 1 + sovMsgRoom_6303(uint64(m.Card))
 	return n
 }
 
@@ -3515,26 +3748,6 @@ func (m *StagePush) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: StagePush: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Stage", wireType)
-			}
-			m.Stage = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMsgRoom_6303
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Stage |= (StageType(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			hasFields[0] |= uint64(0x00000001)
 		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field RoundTime", wireType)
@@ -3554,7 +3767,7 @@ func (m *StagePush) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			hasFields[0] |= uint64(0x00000002)
+			hasFields[0] |= uint64(0x00000001)
 		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CurrPos", wireType)
@@ -3570,25 +3783,6 @@ func (m *StagePush) Unmarshal(dAtA []byte) error {
 				b := dAtA[iNdEx]
 				iNdEx++
 				m.CurrPos |= (uint32(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RoundStage", wireType)
-			}
-			m.RoundStage = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMsgRoom_6303
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.RoundStage |= (uint32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
@@ -3609,9 +3803,6 @@ func (m *StagePush) Unmarshal(dAtA []byte) error {
 		}
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
-		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("stage")
-	}
-	if hasFields[0]&uint64(0x00000002) == 0 {
 		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("round_time")
 	}
 
@@ -3815,6 +4006,260 @@ func (m *RobBankerResp) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *DipaiPush) Unmarshal(dAtA []byte) error {
+	var hasFields [1]uint64
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgRoom_6303
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: DipaiPush: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: DipaiPush: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CurrPos", wireType)
+			}
+			m.CurrPos = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgRoom_6303
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CurrPos |= (uint32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			hasFields[0] |= uint64(0x00000001)
+		case 2:
+			if wireType == 0 {
+				var v uint32
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowMsgRoom_6303
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					v |= (uint32(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				m.Cards = append(m.Cards, v)
+			} else if wireType == 2 {
+				var packedLen int
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowMsgRoom_6303
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					packedLen |= (int(b) & 0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				if packedLen < 0 {
+					return ErrInvalidLengthMsgRoom_6303
+				}
+				postIndex := iNdEx + packedLen
+				if postIndex > l {
+					return io.ErrUnexpectedEOF
+				}
+				var elementCount int
+				var count int
+				for _, integer := range dAtA {
+					if integer < 128 {
+						count++
+					}
+				}
+				elementCount = count
+				if elementCount != 0 && len(m.Cards) == 0 {
+					m.Cards = make([]uint32, 0, elementCount)
+				}
+				for iNdEx < postIndex {
+					var v uint32
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowMsgRoom_6303
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						v |= (uint32(b) & 0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					m.Cards = append(m.Cards, v)
+				}
+			} else {
+				return fmt.Errorf("proto: wrong wireType = %d for field Cards", wireType)
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgRoom_6303(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMsgRoom_6303
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+	if hasFields[0]&uint64(0x00000001) == 0 {
+		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("curr_pos")
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *CardData) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgRoom_6303
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: CardData: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: CardData: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Cardtype", wireType)
+			}
+			m.Cardtype = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgRoom_6303
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Cardtype |= (uint32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Cardvalue", wireType)
+			}
+			m.Cardvalue = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgRoom_6303
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Cardvalue |= (uint32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Extra", wireType)
+			}
+			m.Extra = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgRoom_6303
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Extra |= (uint32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgRoom_6303(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMsgRoom_6303
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *OperationReq) Unmarshal(dAtA []byte) error {
 	var hasFields [1]uint64
 	l := len(dAtA)
@@ -3847,6 +4292,25 @@ func (m *OperationReq) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Pos", wireType)
+			}
+			m.Pos = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgRoom_6303
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Pos |= (uint32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Operation", wireType)
 			}
 			m.Operation = 0
@@ -3865,11 +4329,11 @@ func (m *OperationReq) Unmarshal(dAtA []byte) error {
 				}
 			}
 			hasFields[0] |= uint64(0x00000001)
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Value", wireType)
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Data", wireType)
 			}
-			m.Value = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowMsgRoom_6303
@@ -3879,11 +4343,25 @@ func (m *OperationReq) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.Value |= (uint32(b) & 0x7F) << shift
+				msglen |= (int(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
+			if msglen < 0 {
+				return ErrInvalidLengthMsgRoom_6303
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Data == nil {
+				m.Data = &CardData{}
+			}
+			if err := m.Data.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipMsgRoom_6303(dAtA[iNdEx:])
@@ -3901,80 +4379,6 @@ func (m *OperationReq) Unmarshal(dAtA []byte) error {
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
 		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("operation")
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *LookResp) Unmarshal(dAtA []byte) error {
-	var hasFields [1]uint64
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowMsgRoom_6303
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= (uint64(b) & 0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: LookResp: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: LookResp: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 6:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Card", wireType)
-			}
-			m.Card = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMsgRoom_6303
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Card |= (uint32(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			hasFields[0] |= uint64(0x00000001)
-		default:
-			iNdEx = preIndex
-			skippy, err := skipMsgRoom_6303(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthMsgRoom_6303
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-	if hasFields[0]&uint64(0x00000001) == 0 {
-		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("card")
 	}
 
 	if iNdEx > l {
@@ -4014,9 +4418,9 @@ func (m *PushPosOperation) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field CurrPos", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Pos", wireType)
 			}
-			m.CurrPos = 0
+			m.Pos = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowMsgRoom_6303
@@ -4026,12 +4430,11 @@ func (m *PushPosOperation) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.CurrPos |= (uint32(b) & 0x7F) << shift
+				m.Pos |= (uint32(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			hasFields[0] |= uint64(0x00000001)
 		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Operation", wireType)
@@ -4051,12 +4454,12 @@ func (m *PushPosOperation) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-			hasFields[0] |= uint64(0x00000002)
+			hasFields[0] |= uint64(0x00000001)
 		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field OperationValue", wireType)
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Data", wireType)
 			}
-			m.OperationValue = 0
+			var msglen int
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowMsgRoom_6303
@@ -4066,30 +4469,25 @@ func (m *PushPosOperation) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				m.OperationValue |= (uint32(b) & 0x7F) << shift
+				msglen |= (int(b) & 0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-		case 4:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ReqValue", wireType)
+			if msglen < 0 {
+				return ErrInvalidLengthMsgRoom_6303
 			}
-			m.ReqValue = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMsgRoom_6303
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.ReqValue |= (uint32(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
 			}
+			if m.Data == nil {
+				m.Data = &CardData{}
+			}
+			if err := m.Data.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipMsgRoom_6303(dAtA[iNdEx:])
@@ -4106,9 +4504,6 @@ func (m *PushPosOperation) Unmarshal(dAtA []byte) error {
 		}
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
-		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("curr_pos")
-	}
-	if hasFields[0]&uint64(0x00000002) == 0 {
 		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("operation")
 	}
 
@@ -4801,6 +5196,80 @@ func (m *RoomCodeResp) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *LookResp) Unmarshal(dAtA []byte) error {
+	var hasFields [1]uint64
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowMsgRoom_6303
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: LookResp: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: LookResp: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Card", wireType)
+			}
+			m.Card = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMsgRoom_6303
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Card |= (uint32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			hasFields[0] |= uint64(0x00000001)
+		default:
+			iNdEx = preIndex
+			skippy, err := skipMsgRoom_6303(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthMsgRoom_6303
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+	if hasFields[0]&uint64(0x00000001) == 0 {
+		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("card")
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func skipMsgRoom_6303(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
@@ -4906,80 +5375,85 @@ var (
 	ErrIntOverflowMsgRoom_6303   = fmt.Errorf("proto: integer overflow")
 )
 
-func init() { proto.RegisterFile("msg_room_6303.proto", fileDescriptor_msg_room_6303_e6c5152fae35ae3f) }
+func init() { proto.RegisterFile("msg_room_6303.proto", fileDescriptor_msg_room_6303_61c395a402ec7c01) }
 
-var fileDescriptor_msg_room_6303_e6c5152fae35ae3f = []byte{
-	// 1143 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x56, 0x4d, 0x6f, 0xe3, 0x44,
-	0x18, 0x8e, 0xed, 0x7c, 0xd8, 0x6f, 0xbe, 0xcc, 0x2c, 0x8b, 0xac, 0x0a, 0xb2, 0x59, 0x97, 0x6a,
-	0xa3, 0x22, 0x2a, 0x68, 0xc5, 0xc2, 0xb5, 0x4d, 0xb2, 0x6c, 0x45, 0xd8, 0x06, 0x27, 0x0b, 0x42,
-	0x80, 0xac, 0x69, 0x3c, 0x6d, 0xac, 0x3a, 0x9e, 0xd4, 0xe3, 0x94, 0xee, 0xfe, 0x0a, 0x4e, 0x5c,
-	0x39, 0xf1, 0x37, 0x38, 0xef, 0x71, 0x8f, 0x9c, 0x10, 0x6a, 0x4f, 0xfc, 0x0b, 0x34, 0x33, 0xb6,
-	0xe3, 0x54, 0xfd, 0xd8, 0xde, 0x32, 0xcf, 0xfb, 0xbe, 0x4f, 0x9e, 0x79, 0xbf, 0xc6, 0xf0, 0x60,
-	0xc6, 0x8e, 0xdd, 0x88, 0xd2, 0x99, 0xfb, 0x74, 0xe7, 0xb3, 0x9d, 0xad, 0x79, 0x44, 0x63, 0x8a,
-	0x34, 0xcf, 0x7b, 0xbd, 0xf6, 0x50, 0x5a, 0x02, 0xe2, 0x4e, 0xe8, 0x6c, 0x46, 0x43, 0x69, 0xb3,
-	0xc7, 0x50, 0x1b, 0x2e, 0xd8, 0xd4, 0xa1, 0x74, 0xb6, 0x1f, 0x1e, 0x51, 0xf4, 0x08, 0x74, 0x46,
-	0x82, 0x23, 0x77, 0x4e, 0x99, 0xa5, 0xb4, 0xd5, 0x4e, 0x7d, 0xaf, 0xf8, 0xe6, 0x9f, 0x47, 0x05,
-	0xa7, 0xc2, 0xd1, 0x21, 0x65, 0x68, 0x1d, 0x4a, 0x8c, 0xe0, 0x98, 0x59, 0x6a, 0x5b, 0xed, 0x54,
-	0xb7, 0xeb, 0x5b, 0x9e, 0xf7, 0x7a, 0x6b, 0x44, 0x70, 0xcc, 0xc3, 0x1d, 0x69, 0xb3, 0x7f, 0xd7,
-	0x40, 0x4f, 0x31, 0xf4, 0x01, 0x68, 0x57, 0xd9, 0x38, 0x80, 0xda, 0xa0, 0x87, 0xfe, 0xe4, 0x24,
-	0xc4, 0x33, 0x22, 0xc8, 0x8c, 0xc4, 0x98, 0xa1, 0x68, 0x0d, 0x4a, 0x93, 0xa9, 0x3f, 0x67, 0x96,
-	0xd6, 0x56, 0x3b, 0xc5, 0xc4, 0x2c, 0x21, 0xf4, 0x21, 0x94, 0xf1, 0x19, 0x8e, 0x71, 0x64, 0x15,
-	0x73, 0xc4, 0x09, 0x86, 0x36, 0x40, 0x63, 0xe4, 0xdc, 0x2a, 0xb5, 0xd5, 0x4e, 0x23, 0xd1, 0x28,
-	0xee, 0xce, 0xc8, 0x79, 0x2a, 0x81, 0x91, 0x73, 0xf4, 0x3e, 0x94, 0x26, 0x38, 0xf2, 0x98, 0x55,
-	0x6e, 0x6b, 0x9d, 0xba, 0x23, 0x0f, 0xe8, 0x31, 0x18, 0xfc, 0x87, 0x1b, 0xbf, 0x9a, 0x13, 0xab,
-	0xd2, 0x56, 0x32, 0x76, 0x9d, 0xc3, 0xe3, 0x57, 0x73, 0x82, 0xd6, 0x01, 0x26, 0x8b, 0x28, 0x72,
-	0xa5, 0x3c, 0x3d, 0xe7, 0x63, 0x70, 0xbc, 0x9b, 0x4a, 0x9c, 0x47, 0xf4, 0xc8, 0x8f, 0x2d, 0xa3,
-	0xad, 0x74, 0xb4, 0x54, 0xa2, 0xc4, 0x38, 0x85, 0xcf, 0x5c, 0xcf, 0x67, 0x9c, 0xd4, 0x82, 0xb6,
-	0xd2, 0xd1, 0x53, 0x0a, 0x9f, 0xf5, 0x24, 0x8c, 0x36, 0xa0, 0xea, 0x33, 0x97, 0x4d, 0xe9, 0xaf,
-	0x53, 0x1c, 0x7a, 0x56, 0x35, 0xe7, 0x05, 0x3e, 0x1b, 0x25, 0x38, 0x7a, 0x02, 0x35, 0x36, 0x8f,
-	0xb0, 0x47, 0x5c, 0x3f, 0xf4, 0xc8, 0xb9, 0x55, 0xcb, 0x09, 0xaa, 0x4a, 0xcb, 0x3e, 0x37, 0xd8,
-	0x3f, 0x81, 0xde, 0xc5, 0x91, 0x77, 0x6b, 0x5d, 0xb2, 0xa4, 0xa8, 0x37, 0x26, 0x45, 0xbb, 0x2e,
-	0x29, 0xf6, 0x0e, 0xd4, 0xf7, 0x30, 0x23, 0xe2, 0xf2, 0xbc, 0xa9, 0x90, 0x0d, 0x45, 0x3f, 0x3c,
-	0xa2, 0x96, 0xd2, 0xd6, 0x3a, 0xd5, 0xed, 0x86, 0x28, 0x83, 0xb0, 0x8a, 0x5e, 0x11, 0x36, 0x7b,
-	0x1b, 0xea, 0x3d, 0x82, 0x03, 0xae, 0x4a, 0x06, 0x3d, 0x5e, 0x09, 0x92, 0xb5, 0x4b, 0x35, 0x27,
-	0x31, 0x43, 0xa8, 0x3f, 0xf3, 0x43, 0x1c, 0xf0, 0x40, 0x87, 0xb0, 0xb9, 0x68, 0x14, 0x21, 0x59,
-	0xc9, 0x09, 0x4b, 0x84, 0xaf, 0x03, 0x1c, 0xf9, 0x11, 0x8b, 0x5d, 0x91, 0x67, 0x35, 0x5f, 0x2a,
-	0x81, 0x73, 0x6e, 0xfb, 0x67, 0x80, 0xd1, 0x3c, 0x22, 0xf8, 0xf6, 0xcc, 0xac, 0x41, 0x49, 0xe6,
-	0x57, 0xcd, 0x59, 0x24, 0xb4, 0x94, 0xa0, 0xe5, 0x6d, 0x02, 0xb2, 0x9f, 0x42, 0x53, 0xb2, 0x2f,
-	0x6f, 0xb9, 0xbe, 0x72, 0xcb, 0xa6, 0x9c, 0xa2, 0x4c, 0x41, 0x72, 0xcf, 0x1d, 0x68, 0x74, 0xa7,
-	0x64, 0x72, 0x72, 0xaf, 0xe4, 0xfc, 0xa9, 0x80, 0x31, 0x8a, 0xf1, 0x31, 0x11, 0x01, 0x9f, 0x40,
-	0x89, 0xf1, 0x83, 0xb8, 0x4c, 0x23, 0xf9, 0x23, 0x81, 0x88, 0x4a, 0xa6, 0x3a, 0x05, 0xc2, 0x53,
-	0x15, 0xd1, 0x45, 0xe8, 0xb9, 0xb1, 0x9f, 0xcc, 0x64, 0x96, 0x2a, 0x81, 0x8f, 0xfd, 0x19, 0xe1,
-	0x1b, 0x42, 0xb4, 0x3e, 0xcf, 0x50, 0xbe, 0x0f, 0x2a, 0x1c, 0xe5, 0x1b, 0x62, 0x03, 0xaa, 0x92,
-	0x45, 0xfe, 0x71, 0x31, 0xe7, 0x23, 0xe9, 0x85, 0x3a, 0xfb, 0x25, 0xd4, 0x1d, 0x7a, 0xb8, 0x87,
-	0xc3, 0x13, 0x12, 0x1d, 0xcc, 0x49, 0xb4, 0x42, 0xbc, 0xb2, 0x7a, 0x52, 0xe2, 0x77, 0x91, 0x67,
-	0x7f, 0x97, 0xa3, 0x15, 0xbd, 0x71, 0x27, 0x2d, 0x5f, 0x79, 0x8b, 0x88, 0xb8, 0x11, 0x3d, 0x14,
-	0xa4, 0x7a, 0xb6, 0xf2, 0x16, 0x11, 0x71, 0xe8, 0xa1, 0x3d, 0x81, 0x1a, 0x17, 0x88, 0x63, 0x9f,
-	0x86, 0x0e, 0x39, 0x45, 0x5f, 0x82, 0x41, 0xd3, 0x73, 0x92, 0xd7, 0x07, 0x22, 0xaf, 0x19, 0x9a,
-	0xcf, 0xed, 0xd2, 0x97, 0xf7, 0xc8, 0x19, 0x0e, 0x16, 0x64, 0xa5, 0x0b, 0x25, 0x64, 0x7f, 0x0c,
-	0xfa, 0x80, 0xd2, 0x13, 0x21, 0xd9, 0x82, 0xa2, 0x68, 0xd6, 0x72, 0x4e, 0xae, 0x40, 0xec, 0xbf,
-	0x14, 0x30, 0x79, 0x5d, 0x87, 0x94, 0x65, 0x92, 0xee, 0xbe, 0xe1, 0x8a, 0x60, 0xf5, 0x1e, 0x82,
-	0x3f, 0x85, 0xe6, 0xd2, 0x45, 0x4a, 0xcf, 0x97, 0xbc, 0x91, 0x19, 0xbf, 0xe7, 0x36, 0xbe, 0x23,
-	0x22, 0x72, 0x9a, 0x38, 0xe6, 0xeb, 0xae, 0x47, 0xe4, 0x54, 0xb8, 0xd8, 0xbf, 0x80, 0x91, 0x6d,
-	0x80, 0xdb, 0xe6, 0x4c, 0x2e, 0x56, 0xf5, 0xda, 0xbd, 0x9f, 0x2c, 0x55, 0x3e, 0x68, 0x57, 0x96,
-	0xaa, 0xfd, 0x05, 0x34, 0x47, 0x24, 0x8e, 0x83, 0x7b, 0x2e, 0xa1, 0x27, 0x50, 0x1f, 0x10, 0x7c,
-	0x46, 0xf8, 0x33, 0x28, 0x82, 0x6e, 0x50, 0x66, 0xff, 0xa7, 0x42, 0xd3, 0x21, 0x01, 0x3d, 0xf6,
-	0x43, 0x11, 0xce, 0xab, 0x75, 0xd3, 0x2d, 0xb2, 0xd1, 0x53, 0xef, 0x3d, 0x7a, 0xda, 0xdd, 0xa3,
-	0x57, 0xbc, 0x6e, 0xf4, 0xb2, 0xc7, 0xb9, 0x94, 0xdb, 0x0f, 0x57, 0x1e, 0x67, 0xde, 0x5d, 0x38,
-	0x8c, 0xc9, 0x6a, 0x77, 0x71, 0x44, 0x4c, 0x2e, 0xf6, 0x19, 0x71, 0x67, 0x8b, 0x20, 0xf6, 0xad,
-	0x4a, 0xce, 0x01, 0x84, 0xe1, 0x5b, 0x8e, 0xa3, 0x4d, 0x68, 0xe0, 0x20, 0x70, 0x57, 0x1e, 0xc0,
-	0x65, 0x9d, 0x6a, 0x38, 0x08, 0xba, 0xd9, 0x1b, 0xb8, 0x06, 0x25, 0xa1, 0xdf, 0x32, 0xf2, 0x6b,
-	0x51, 0x40, 0xe8, 0x23, 0x80, 0xa9, 0xef, 0x11, 0x57, 0xee, 0x4d, 0x10, 0xaf, 0x8d, 0xc1, 0x11,
-	0xb1, 0xef, 0xec, 0xaf, 0xa0, 0xc6, 0xeb, 0xd1, 0xa5, 0x1e, 0x11, 0x79, 0xee, 0x40, 0x71, 0x42,
-	0xbd, 0x74, 0x93, 0x35, 0x92, 0x47, 0x9d, 0xce, 0x5c, 0x8e, 0x66, 0x53, 0x42, 0x3d, 0xb2, 0xf9,
-	0x87, 0x02, 0xb0, 0x4c, 0x34, 0x7a, 0x08, 0xef, 0x65, 0x9f, 0x44, 0x6e, 0x44, 0xce, 0x48, 0xc4,
-	0x88, 0x59, 0x40, 0x4d, 0xa8, 0x8e, 0xc6, 0xbb, 0x5f, 0xf7, 0x5d, 0xa7, 0xbf, 0xdb, 0xfb, 0xd1,
-	0x54, 0x50, 0x1d, 0x0c, 0x09, 0xec, 0xf5, 0xc7, 0xa6, 0x8a, 0x1a, 0x00, 0xf2, 0xd8, 0xeb, 0xef,
-	0x0e, 0x4c, 0x0d, 0x99, 0x50, 0x93, 0xe7, 0xd1, 0xd0, 0xd9, 0xed, 0xf5, 0xcd, 0x22, 0x27, 0x96,
-	0xc8, 0xb3, 0xfd, 0x17, 0xbb, 0x03, 0xd7, 0x39, 0x78, 0xf9, 0xa2, 0x67, 0x96, 0x96, 0xc4, 0xdd,
-	0xe7, 0xfd, 0xee, 0x37, 0x66, 0x39, 0x17, 0xd9, 0x1f, 0x8f, 0x07, 0x7d, 0xb3, 0xb2, 0xf9, 0x39,
-	0x18, 0x99, 0xf4, 0x4c, 0x1f, 0x3f, 0xe4, 0xf4, 0xd5, 0xc1, 0x18, 0x1c, 0xfc, 0xe0, 0x76, 0x9f,
-	0xef, 0x0f, 0x47, 0xa6, 0xb2, 0x19, 0x40, 0x63, 0x75, 0x5c, 0x91, 0x0e, 0xc5, 0x80, 0xd2, 0x13,
-	0xb3, 0xc0, 0x7f, 0xcd, 0x31, 0x63, 0xa6, 0x82, 0xaa, 0x50, 0x49, 0x3e, 0x29, 0x4c, 0x15, 0x19,
-	0x50, 0x9a, 0xf8, 0xe1, 0x71, 0x60, 0x6a, 0xfc, 0xa7, 0xa8, 0xa0, 0x59, 0x44, 0x35, 0xd0, 0xd3,
-	0x0f, 0x0a, 0xb3, 0x84, 0x00, 0xca, 0xf2, 0x03, 0xc1, 0x2c, 0x0b, 0x7f, 0xfe, 0xde, 0x98, 0x95,
-	0x3d, 0xeb, 0xcd, 0x45, 0x4b, 0x79, 0x7b, 0xd1, 0x52, 0xfe, 0xbd, 0x68, 0x29, 0xbf, 0x5d, 0xb6,
-	0x0a, 0x6f, 0x2f, 0x5b, 0x85, 0xbf, 0x2f, 0x5b, 0x85, 0xff, 0x03, 0x00, 0x00, 0xff, 0xff, 0x70,
-	0xb7, 0x28, 0x03, 0x63, 0x0a, 0x00, 0x00,
+var fileDescriptor_msg_room_6303_61c395a402ec7c01 = []byte{
+	// 1218 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xc4, 0x96, 0xbf, 0x6f, 0xdb, 0xc6,
+	0x17, 0xc0, 0x4d, 0x52, 0xb2, 0xc5, 0x67, 0xfd, 0xe0, 0xf7, 0x92, 0x7c, 0x41, 0x18, 0xad, 0xa2,
+	0xd0, 0x09, 0x22, 0xb8, 0x40, 0xd0, 0xda, 0x68, 0xda, 0x55, 0x12, 0x99, 0x58, 0x88, 0x2a, 0x29,
+	0x94, 0x8c, 0x22, 0xfd, 0x01, 0xe2, 0x22, 0x9e, 0x23, 0xc2, 0x14, 0x8f, 0xe5, 0x51, 0xae, 0x93,
+	0xb1, 0x43, 0xe7, 0x4e, 0x5d, 0xbb, 0xf7, 0x2f, 0xc9, 0x98, 0xb1, 0x53, 0x51, 0x24, 0x53, 0xff,
+	0x8b, 0xe2, 0xee, 0x28, 0x8a, 0x32, 0x9c, 0xa4, 0x99, 0xba, 0x89, 0x9f, 0x77, 0xef, 0xdd, 0xfb,
+	0x7d, 0x82, 0x6b, 0x0b, 0xf6, 0xcc, 0x4b, 0x28, 0x5d, 0x78, 0xf7, 0x8f, 0x3e, 0x3d, 0xba, 0x17,
+	0x27, 0x34, 0xa5, 0x48, 0xf3, 0xfd, 0x17, 0x7b, 0x37, 0xa4, 0x24, 0x24, 0xde, 0x8c, 0x2e, 0x16,
+	0x34, 0x92, 0x32, 0x6b, 0x0a, 0xd5, 0xf1, 0x92, 0xcd, 0x5d, 0x4a, 0x17, 0xfd, 0xe8, 0x94, 0xa2,
+	0x9b, 0x50, 0x61, 0x24, 0x3c, 0xf5, 0x62, 0xca, 0x4c, 0xa5, 0xa5, 0xb6, 0x6b, 0xdd, 0xd2, 0xcb,
+	0x3f, 0x6f, 0x6e, 0xb9, 0x3b, 0x9c, 0x8e, 0x29, 0x43, 0xfb, 0x50, 0x66, 0x04, 0xa7, 0xcc, 0x54,
+	0x5b, 0x6a, 0x7b, 0xf7, 0xb0, 0x76, 0xcf, 0xf7, 0x5f, 0xdc, 0x9b, 0x10, 0x9c, 0x72, 0x75, 0x57,
+	0xca, 0xac, 0x5f, 0x35, 0xa8, 0xac, 0x18, 0xfa, 0x3f, 0x68, 0x97, 0xad, 0x71, 0x80, 0x5a, 0x50,
+	0x89, 0x82, 0xd9, 0x59, 0x84, 0x17, 0x44, 0x18, 0xd3, 0x33, 0x61, 0x4e, 0xd1, 0x1e, 0x94, 0x67,
+	0xf3, 0x20, 0x66, 0xa6, 0xd6, 0x52, 0xdb, 0xa5, 0x4c, 0x2c, 0x11, 0xfa, 0x08, 0xb6, 0xf1, 0x39,
+	0x4e, 0x71, 0x62, 0x96, 0x0a, 0x86, 0x33, 0x86, 0xee, 0x80, 0xc6, 0xc8, 0x85, 0x59, 0x6e, 0xa9,
+	0xed, 0x7a, 0xe6, 0xa3, 0x88, 0x9d, 0x91, 0x8b, 0x95, 0x0b, 0x8c, 0x5c, 0xa0, 0xeb, 0x50, 0x9e,
+	0xe1, 0xc4, 0x67, 0xe6, 0x76, 0x4b, 0x6b, 0xd7, 0x5c, 0xf9, 0x81, 0x6e, 0x81, 0xce, 0x7f, 0x78,
+	0xe9, 0xf3, 0x98, 0x98, 0x3b, 0x2d, 0x25, 0xb7, 0x5e, 0xe1, 0x78, 0xfa, 0x3c, 0x26, 0x68, 0x1f,
+	0x60, 0xb6, 0x4c, 0x12, 0x4f, 0xba, 0x57, 0x29, 0x9c, 0xd1, 0x39, 0xef, 0xad, 0x5c, 0x8c, 0x13,
+	0x7a, 0x1a, 0xa4, 0xa6, 0xde, 0x52, 0xda, 0xda, 0xca, 0x45, 0xc9, 0xb8, 0x89, 0x80, 0x79, 0x7e,
+	0xc0, 0xb8, 0x51, 0x13, 0x5a, 0x4a, 0xbb, 0xb2, 0x32, 0x11, 0x30, 0x5b, 0x62, 0x74, 0x07, 0x76,
+	0x03, 0xe6, 0xb1, 0x39, 0xfd, 0x71, 0x8e, 0x23, 0xdf, 0xdc, 0x2d, 0x9c, 0x82, 0x80, 0x4d, 0x32,
+	0x8e, 0xee, 0x42, 0x95, 0xc5, 0x09, 0xf6, 0x89, 0x17, 0x44, 0x3e, 0xb9, 0x30, 0xab, 0x05, 0x87,
+	0x76, 0xa5, 0xa4, 0xcf, 0x05, 0xd6, 0xb7, 0x50, 0xe9, 0xe1, 0xc4, 0x7f, 0x67, 0x5d, 0xf2, 0xa4,
+	0xa8, 0x6f, 0x4d, 0x8a, 0x76, 0x55, 0x52, 0xac, 0x23, 0xa8, 0x75, 0x31, 0x23, 0x22, 0x78, 0xde,
+	0x54, 0xc8, 0x82, 0x52, 0x10, 0x9d, 0x52, 0x53, 0x69, 0x69, 0xed, 0xdd, 0xc3, 0xba, 0x28, 0x83,
+	0x90, 0x8a, 0x5e, 0x11, 0x32, 0xeb, 0x10, 0x6a, 0x36, 0xc1, 0x21, 0xf7, 0x4a, 0x2a, 0xdd, 0xda,
+	0x50, 0x92, 0xb5, 0x5b, 0xf9, 0x9c, 0xe9, 0x8c, 0xa1, 0xf6, 0x20, 0x88, 0x70, 0xc8, 0x15, 0x5d,
+	0xc2, 0x62, 0xd1, 0x28, 0xc2, 0x65, 0xa5, 0xe0, 0x58, 0xe6, 0xf8, 0x3e, 0xc0, 0x69, 0x90, 0xb0,
+	0xd4, 0x13, 0x79, 0x56, 0x8b, 0xa5, 0x12, 0x9c, 0xdb, 0xb6, 0xbe, 0x03, 0x98, 0xc4, 0x09, 0xc1,
+	0xef, 0xce, 0xcc, 0x1e, 0x94, 0x65, 0x7e, 0xd5, 0x82, 0x44, 0xa2, 0xb5, 0x0b, 0x5a, 0x51, 0x26,
+	0x90, 0x75, 0x1f, 0x1a, 0xd2, 0xfa, 0x3a, 0xca, 0xfd, 0x8d, 0x28, 0x1b, 0x72, 0x8a, 0x72, 0x0f,
+	0xb2, 0x38, 0x8f, 0xa0, 0xde, 0x9b, 0x93, 0xd9, 0xd9, 0x07, 0x25, 0xe7, 0x31, 0xe8, 0x93, 0x14,
+	0x3f, 0x23, 0xd9, 0x35, 0x90, 0xd0, 0x65, 0xe4, 0x7b, 0x69, 0x90, 0x4d, 0x59, 0x1e, 0xbc, 0xe0,
+	0xd3, 0x60, 0x41, 0xf8, 0xcc, 0x8b, 0x66, 0xe6, 0x31, 0x17, 0x2b, 0xbb, 0xc3, 0xe9, 0x98, 0x32,
+	0xeb, 0x04, 0x6a, 0x2e, 0x7d, 0xda, 0xc5, 0xd1, 0x19, 0x49, 0x46, 0x31, 0x49, 0x36, 0x34, 0x36,
+	0xb6, 0x44, 0xa6, 0xf1, 0xaf, 0xee, 0xb5, 0x1e, 0x17, 0xcc, 0x8a, 0x32, 0xbe, 0xd7, 0x2c, 0xdf,
+	0x4e, 0xcb, 0x84, 0x78, 0x09, 0x7d, 0x2a, 0x8c, 0x56, 0xf2, 0xed, 0xb4, 0x4c, 0x88, 0x4b, 0x9f,
+	0x5a, 0x5d, 0xd0, 0xed, 0x20, 0xc6, 0x81, 0x08, 0xfe, 0xbd, 0xe6, 0xae, 0xec, 0x74, 0x2b, 0x94,
+	0x33, 0x62, 0xe3, 0x14, 0xf3, 0x1d, 0xc5, 0xa1, 0x68, 0x7a, 0xe5, 0x72, 0xd3, 0x73, 0x8a, 0x2c,
+	0x39, 0x17, 0xe7, 0x38, 0x5c, 0x92, 0xcd, 0xee, 0xca, 0x31, 0xef, 0x0d, 0x72, 0x91, 0x26, 0x78,
+	0x23, 0xbb, 0x12, 0x59, 0x3f, 0x29, 0x50, 0xe5, 0x39, 0xc5, 0x69, 0x40, 0x23, 0x97, 0xfc, 0xb0,
+	0x6e, 0x3e, 0x65, 0xb3, 0xf9, 0xbe, 0x00, 0x9d, 0xae, 0xce, 0x89, 0xe0, 0xeb, 0x87, 0xd7, 0x44,
+	0xfd, 0x73, 0x2a, 0x66, 0x73, 0x75, 0x7b, 0x4e, 0x79, 0xcf, 0xf8, 0x38, 0x95, 0x97, 0x17, 0x7b,
+	0x86, 0x07, 0xe8, 0x0a, 0x91, 0xf5, 0xb3, 0x02, 0x06, 0x4f, 0xd9, 0x98, 0xb2, 0xdc, 0x97, 0xff,
+	0xc4, 0x91, 0xef, 0x41, 0xcf, 0x17, 0xc4, 0xbb, 0xc6, 0x50, 0xee, 0x5d, 0xf5, 0xca, 0x67, 0x21,
+	0xdb, 0xb9, 0x7c, 0x0e, 0x2f, 0xed, 0x5c, 0xeb, 0x73, 0x68, 0x4c, 0x48, 0x9a, 0x86, 0x1f, 0xb8,
+	0xa3, 0xee, 0x42, 0x6d, 0x40, 0xf0, 0x39, 0xe1, 0xaf, 0xa4, 0x50, 0x7a, 0x8b, 0x67, 0xd6, 0xdf,
+	0x2a, 0x34, 0x5c, 0x12, 0xd2, 0x67, 0x41, 0x24, 0xd4, 0x79, 0x53, 0xbf, 0x2d, 0x8a, 0x4f, 0xa0,
+	0xcc, 0xf8, 0x9c, 0x66, 0x29, 0x94, 0x2b, 0x40, 0x90, 0x62, 0xfa, 0xe4, 0x99, 0x4b, 0xf3, 0xa4,
+	0xbd, 0x7f, 0x8e, 0x4b, 0x57, 0xcc, 0xf1, 0xfa, 0xed, 0x2e, 0x17, 0xd6, 0xc7, 0xa5, 0xb7, 0x1b,
+	0x99, 0x50, 0xc2, 0x51, 0x4a, 0xcc, 0xed, 0xc2, 0x25, 0x82, 0xf0, 0xc7, 0x28, 0xc1, 0x01, 0x23,
+	0xde, 0x62, 0x19, 0xa6, 0x81, 0xb9, 0x53, 0x38, 0x00, 0x42, 0xf0, 0x15, 0xe7, 0xe8, 0x00, 0xea,
+	0x38, 0x0c, 0xbd, 0x8d, 0xf7, 0x71, 0x5d, 0xa7, 0x2a, 0x0e, 0xc3, 0x5e, 0xfe, 0x44, 0xee, 0x41,
+	0x59, 0xf8, 0x6f, 0xea, 0xc5, 0xad, 0x29, 0x10, 0xfa, 0x18, 0x60, 0x1e, 0xf8, 0xc4, 0x93, 0x23,
+	0x0a, 0x62, 0x44, 0x75, 0x4e, 0xc4, 0x3a, 0xb4, 0xbe, 0x84, 0x2a, 0xaf, 0x47, 0x8f, 0xfa, 0x44,
+	0xe4, 0xb9, 0x0d, 0xa5, 0x19, 0xf5, 0x89, 0x48, 0x74, 0x3d, 0x2b, 0xa4, 0xf8, 0x27, 0xc4, 0xe9,
+	0x2a, 0x0e, 0xfe, 0xdb, 0xba, 0x0d, 0x95, 0x01, 0xa5, 0x67, 0x42, 0xcb, 0x84, 0x92, 0x78, 0x17,
+	0x36, 0xa2, 0xe5, 0xe4, 0xe0, 0x37, 0x05, 0x60, 0x5d, 0x0e, 0x74, 0x03, 0xfe, 0x97, 0xff, 0xaf,
+	0xf2, 0x12, 0x72, 0x4e, 0x12, 0x46, 0x8c, 0x2d, 0xd4, 0x80, 0xdd, 0xc9, 0xb4, 0xf3, 0xd0, 0xf1,
+	0x5c, 0xa7, 0x63, 0x3f, 0x31, 0x14, 0x54, 0x03, 0x5d, 0x82, 0xae, 0x33, 0x35, 0x54, 0x54, 0x07,
+	0x90, 0x9f, 0xb6, 0xd3, 0x19, 0x18, 0x1a, 0x32, 0xa0, 0x2a, 0xbf, 0x27, 0x63, 0xb7, 0x63, 0x3b,
+	0x46, 0x89, 0x1b, 0x96, 0xe4, 0x41, 0x7f, 0xd8, 0x19, 0x78, 0xee, 0xe8, 0x64, 0x68, 0x1b, 0xe5,
+	0xb5, 0xe1, 0xde, 0xb1, 0xd3, 0x7b, 0x64, 0x6c, 0x17, 0x34, 0x9d, 0xe9, 0x74, 0xe0, 0x18, 0x3b,
+	0x07, 0x9f, 0x81, 0x9e, 0x07, 0x98, 0xfb, 0xc7, 0x3f, 0x0a, 0xfe, 0xd5, 0x40, 0x1f, 0x8c, 0xbe,
+	0xf6, 0x7a, 0xc7, 0xfd, 0xf1, 0xc4, 0x50, 0x0e, 0x6e, 0x43, 0x7d, 0x73, 0x4a, 0x51, 0x05, 0x4a,
+	0x31, 0x66, 0xcc, 0xd8, 0xe2, 0xbf, 0x7c, 0x1a, 0xa4, 0x86, 0x72, 0xf0, 0xbb, 0x02, 0x7a, 0xaf,
+	0xe3, 0xda, 0xde, 0xf4, 0xc9, 0xd8, 0x41, 0x00, 0xdb, 0x43, 0x9a, 0x2e, 0x57, 0xe1, 0xba, 0xa3,
+	0xde, 0x23, 0x67, 0x2a, 0x44, 0x86, 0xc2, 0xc1, 0x37, 0xc7, 0x1d, 0xbb, 0x33, 0x94, 0x40, 0x45,
+	0xd7, 0xa0, 0x61, 0x8f, 0x4e, 0x06, 0xce, 0xc0, 0xeb, 0x0f, 0x1f, 0x49, 0xa8, 0xa1, 0xeb, 0x60,
+	0x4c, 0xfa, 0xc3, 0x87, 0x03, 0xc7, 0x1b, 0xe4, 0xb4, 0x84, 0x10, 0xd4, 0xa7, 0xc7, 0xae, 0xe3,
+	0x78, 0xa3, 0xa1, 0x23, 0x59, 0x99, 0xe7, 0x4b, 0x32, 0xf1, 0xbd, 0xcd, 0xed, 0xdb, 0xa3, 0x93,
+	0xee, 0x20, 0x03, 0x3b, 0x22, 0x2f, 0xd2, 0x94, 0x00, 0x95, 0xae, 0xf9, 0xf2, 0x75, 0x53, 0x79,
+	0xf5, 0xba, 0xa9, 0xfc, 0xf5, 0xba, 0xa9, 0xfc, 0xf2, 0xa6, 0xb9, 0xf5, 0xea, 0x4d, 0x73, 0xeb,
+	0x8f, 0x37, 0xcd, 0xad, 0x7f, 0x02, 0x00, 0x00, 0xff, 0xff, 0xd9, 0xf7, 0x48, 0xca, 0x0d, 0x0b,
+	0x00, 0x00,
 }
