@@ -96,6 +96,36 @@ func (self* DDZ_Player) easy_play() *Previouser {
 	return nil
 }
 
+func (self* DDZ_Player) try(cardtype CARD_TYPE,cardvalue uint32) *Previouser{
+
+	switch cardtype{
+	//对方出的炸弹,自己手里的炸弹组里的牌打不过或没炸弹,这里尝试分析手里是否有火箭牌
+	case ZHADAN_TYPE:
+		if len(self.Game.Parse.Rocket) != 0{
+			//打出去的火箭牌清空
+			self.Game.Parse.Rocket = self.Game.Parse.Rocket[0:0]
+			preoper := &Previouser{
+				OperType:uint32(ddz.OperationType_doit),
+				Point:self.Game.Point,
+				Cardtype:ROCKET_TYPE,
+				CardValue:0,//大小鬼本应该放到这个字段返回的,这里不填写了,通过Cardtype识别出的是大小鬼
+				Extra:0,
+			}
+			self.Game.Pre = preoper
+			return preoper
+		}else{
+			preoper := &Previouser{
+				OperType:uint32(ddz.OperationType_pass),
+				Point:self.Game.Point,
+			}
+			//保存到上家出牌内容结构体中
+			self.Game.Pre = preoper
+			return preoper
+		}
+	}
+
+	return nil
+}
 //根据上家出牌内容 分析出合适的牌
 
 func (self* DDZ_Player) judge()  *Previouser{
@@ -124,13 +154,9 @@ func (self* DDZ_Player) judge()  *Previouser{
 			}
 		}
 
+		//检测手里是否有大于炸弹的牌
 		if index == -1{
-			preoper := &Previouser{
-				OperType:uint32(ddz.OperationType_pass),
-				Point:self.Game.Point,
-			}
-			self.Game.Pre = preoper
-			return preoper
+			return self.try(ZHADAN_TYPE,self.Game.Pre.CardValue)
 		}else{
 			//出过的牌移除之
 			self.Game.Parse.Bombes = append(self.Game.Parse.Bombes[0:index],self.Game.Parse.Bombes[index+1:]...)
