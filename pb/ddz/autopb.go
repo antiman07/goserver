@@ -20,7 +20,7 @@ import (
 	"trunk/cellnet/codec"
 )
 
-func init() {
+func NotWriteInit() {
 
 	// msg.proto
 	// msg_base.proto
@@ -286,6 +286,11 @@ func init() {
 		Codec: codec.MustGetCodec("gogopb"),
 		Type:  reflect.TypeOf((*PushPosOperation)(nil)).Elem(),
 		ID:    13075,
+	})
+	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{
+		Codec: codec.MustGetCodec("gogopb"),
+		Type:  reflect.TypeOf((*GameoverPush)(nil)).Elem(),
+		ID:    56550,
 	})
 	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{
 		Codec: codec.MustGetCodec("gogopb"),

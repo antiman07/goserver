@@ -7,7 +7,6 @@ import (
 	"github.com/gorilla/websocket"
 	"trunk/cellnet"
 	"trunk/cellnet/codec"
-	"trunk/cellnet/game"
 	"trunk/cellnet/myrpc"
 )
 
@@ -20,7 +19,7 @@ type WSMessageTransmitter struct {
 }
 
 
-/*func (WSMessageTransmitter) OnRecvMessage(ses cellnet.Session) (msg interface{}, err error) {
+func (WSMessageTransmitter) OnRecvMessage(ses cellnet.Session) (msg interface{}, err error) {
 
 	conn, ok := ses.Raw().(*websocket.Conn)
 
@@ -84,10 +83,10 @@ func (WSMessageTransmitter) OnSendMessage(ses cellnet.Session, msg interface{}) 
 		return err
 	}
 	return nil
-}*/
+}
 
 
-func (WSMessageTransmitter) OnRecvMessage(ses cellnet.Session) (msg interface{}, err error) {
+/*func (WSMessageTransmitter) OnRecvMessage(ses cellnet.Session) (msg interface{}, err error) {
 
 	conn, ok := ses.Raw().(*websocket.Conn)
 
@@ -166,4 +165,4 @@ func (WSMessageTransmitter) OnSendMessage(ses cellnet.Session, msg interface{}) 
 		return err
 	}
 	return nil
-}
+}*/

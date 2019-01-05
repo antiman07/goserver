@@ -4,6 +4,11 @@ package ddz
 */
 
 func MaxSerialArr(arr []int) []int {
+
+	if len(arr) == 0{
+		return nil
+	}
+
 	//总长
 	var max = 0
 	//集合点

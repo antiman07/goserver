@@ -3,6 +3,7 @@ package ddz
 import (
 	"fmt"
 	"sort"
+	"trunk/cellnet/myrpc"
 )
 
 type CARD_TYPE uint32
@@ -91,9 +92,14 @@ func (self* Parser) SplitCard(){
 	//通过拆牌顺序 可以调整出不同的出牌策略
 	self.fillRocket()
 	self.fillZhaDan()
-	self.fillDoubleLink()
-	self.fillSingleLink()
+
+	//顺子牌 和 三牌 调用顺序有讲究,要充分考虑组装类型牌时 删除其他数组的牌
 	self.fillThreeCard()
+	self.fillDoubleLink() //组装多顺子牌时 把M2 M1中相应的牌删除掉
+
+	self.fillSingleLink() //组装单顺子牌时 切记把M2中本组成对子的牌移到单张牌中
+
+
 	self.fillDoubleCard()
 	self.fillSingleCard()
 }
@@ -102,6 +108,8 @@ func (self* Parser) SplitCard(){
 func (self* Parser) fillSingleCard(){
 
 	self.SingleCards = append(self.SingleCards,self.M1...)
+	//排下顺序
+	sort.Ints(self.SingleCards)
 }
 
 //组装对子牌 55 99 1111
@@ -119,7 +127,7 @@ func (self* Parser) fillDoubleCard() {
 			}
 		}
 		if del_index != -1{
-			self.M1 = append(self.M1[0:del_index], self.M1[del_index+1:]...)
+			self.M1 = append(self.M1[:del_index], self.M1[del_index+1:]...)
 		}
 	}
 
@@ -130,24 +138,43 @@ func (self* Parser) fillDoubleCard() {
 
 //组装火箭牌 从单牌M1 中检测是否有火箭(即是大小鬼 14 15)
 func (self* Parser) fillRocket(){
-	var it,jt int
-	var  have_small_gui,have_big_gui bool
+
+	var it,jt int = -1,-1
+
 	for i,v := range self.M1{
+
 		if v == SMALL_GHOST{
 			it = i
-			have_small_gui= true
 		}else if v == BIG_GHOST{
 			jt = i
-			have_big_gui = true
 		}
 	}
 
-	if have_small_gui && have_big_gui{
+	if it != -1 && jt != -1{
+
 		//大小鬼填充到火箭组
 		self.Rocket = append(self.Rocket,self.M1[it],self.M1[jt])
 		//remove M1 中的大小鬼
-		self.M1 = append(self.M1[0:it],self.M1[it+1:]...)
-		self.M1 = append(self.M1[0:jt],self.M1[jt+1:]...)
+/*		self.M1 = append(self.M1[:it],self.M1[it+1:]...)
+		self.M1 = append(self.M1[:jt],self.M1[jt+1:]...)*/
+
+		host1 := self.M1[it]
+		host2 := self.M1[jt]
+
+		for i,v := range self.M1{
+			if v == host1{
+				self.M1 = append(self.M1[:i],self.M1[i+1:]...)
+				break
+			}
+		}
+
+		for i,v := range self.M1{
+			if v == host2{
+				self.M1 = append(self.M1[:i],self.M1[i+1:]...)
+				break
+			}
+		}
+
 	}
 }
 
@@ -159,34 +186,46 @@ func (self* Parser) fillZhaDan(){
 
 		self.Bombes = append(self.Bombes,zhadan)
 
-		var index int
+
 		//remove M1 M2 M3 M4 中的炸弹牌
 		//移除self.M1中的炸弹牌 begin
+		var index = -1
 		for i,value := range self.M1{
 			if value == zhadan{
 				index = i
 				break
 			}
 		}
-		self.M1 = append(self.M1[0:index],self.M1[index+1:]...)
+
+		if index != -1{
+			self.M1 = append(self.M1[:index],self.M1[index+1:]...)
+		}
 
 		//移除self.M2中的炸弹牌 begin
+		index = -1
 		for i,value := range self.M2{
 			if value == zhadan{
 				index = i
 				break
 			}
 		}
-		self.M2 = append(self.M2[0:index],self.M2[index+1:]...)
+
+		if index != -1 {
+			self.M2 = append(self.M2[:index], self.M2[index+1:]...)
+		}
+
 
 		//移除self.M3中的炸弹牌 begin
+		index = -1
 		for i,value := range self.M3{
 			if value == zhadan{
 				index = i
 				break
 			}
 		}
-		self.M3 = append(self.M3[0:index],self.M3[index+1:]...)
+		if index != -1 {
+			self.M3 = append(self.M3[:index], self.M3[index+1:]...)
+		}
 		//end
 	}
 
@@ -198,6 +237,10 @@ func (self* Parser) fillDoubleLink()  {
 	//组装双顺牌(分析M2中是否有超过3张连续的牌 eg:112233 66778899)
 	for{
 		sub_series_arr := MaxSerialArr(self.M2)
+		if nil == sub_series_arr{
+			return
+		}
+
 		length := len(sub_series_arr)
 		if length >= 3{
 			//生成一个双顺牌存放起来,同时移除M1 M2中对应数字,继续找下个双顺牌,找不到就退出
@@ -212,14 +255,14 @@ func (self* Parser) fillDoubleLink()  {
 
 				for m1_i,m1_v := range self.M1{
 					if m1_v == v{
-						self.M1 = append(self.M1[0:m1_i],self.M1[m1_i+1:]...)
+						self.M1 = append(self.M1[:m1_i],self.M1[m1_i+1:]...)
 						break
 					}
 				}
 
 				for m2_i,m2_v := range self.M2{
 					if m2_v == v{
-						self.M2 = append(self.M2[0:m2_i],self.M2[m2_i+1:]...)
+						self.M2 = append(self.M2[:m2_i],self.M2[m2_i+1:]...)
 						break
 					}
 				}
@@ -237,6 +280,10 @@ func (self* Parser) fillSingleLink()  {
 	//组装单顺牌(分析M1中是否有5张及以上连续的牌 eg:1 2 3 4 5 or 8 9 10 11 12 13)
 	for{
 		sub_series_arr := MaxSerialArr(self.M1)
+		if nil == sub_series_arr{
+			return
+		}
+
 		length := len(sub_series_arr)
 		if length >= 5{
 			//生成一个单顺牌存放起来,同时移除M1中对应数字,继续找下个双顺牌,找不到就退出
@@ -249,12 +296,23 @@ func (self* Parser) fillSingleLink()  {
 
 			for _,v :=range sub_series_arr{
 
+				//1 移除M1中顺子牌
 				for m1_i,m1_v := range self.M1{
 					if m1_v == v{
-						self.M1 = append(self.M1[0:m1_i],self.M1[m1_i+1:]...)
+						self.M1 = append(self.M1[:m1_i],self.M1[m1_i+1:]...)
 						break
 					}
 				}
+
+				//2 把本应该是对子的牌从M2中移除掉 放到M1中拆为单牌
+				for m2_i,m2_v := range self.M2{
+					if m2_v == v{
+						self.M2 = append(self.M2[:m2_i],self.M2[m2_i+1:]...)
+						self.M1 = append(self.M1,m2_v)
+						break
+					}
+				}
+
 			}
 
 			//继续找单顺牌
@@ -268,64 +326,100 @@ func (self* Parser) fillSingleLink()  {
 func (self* Parser) fillThreeCard(){
 	//组装三带一牌(从M3开始循环组装三带一牌,同时移除M3 M2 M1中都存在的牌以及移除M1中带的单牌)
 	//要确保数组寻址有效(不然程序崩溃)
-	for{
-		for _,m3_v := range self.M3{
-			//M1不等于0 就可以组成三带一
-			if len(self.M1) != 0{
-				node := &ThreeOneCarder{
-					ThreeCard:m3_v,
-					SingleCard:self.M1[0],//带牌用单牌组的头一个
-				}
-				self.ThreeOneCards = append(self.ThreeOneCards,*node)
 
-				//清空m1 m2中相应的牌
-				//1 先清空m1中的头一个牌(即是三带一中的单牌)
-				if len(self.M1) >1{
-					self.M1 = self.M1[1:]
-				}
+	for _,m3_v := range self.M3{
 
-				//2 再清空 m1 中值等于m3_v的牌
-				{
-					idx := -1
-					for i,v := range self.M1{
-						if v == m3_v{
-							idx = i
-							break
-						}
-					}
-					if idx != -1{
-						self.M1 = append(self.M1[0:idx],self.M1[idx+1:]...)
+			//1 清空 m1 中值等于m3_v的牌
+			{
+				idx := -1
+				for i,v := range self.M1{
+					if v == m3_v{
+						idx = i
+						break
 					}
 				}
-
-				//3 再清空 m2中值等于m3_v的牌
-				{
-					idx := -1
-					for i,v := range self.M2{
-						if v == m3_v{
-							idx = i
-							break
-						}
-					}
-					self.M2 = append(self.M2[0:idx],self.M2[idx+1:]...)
+				if idx != -1{
+					self.M1 = append(self.M1[:idx],self.M1[idx+1:]...)
 				}
-			}else{
-				//M1中没有值 就组成三牌
-				node := &ThreeCarder{
-					ThreeCard:m3_v,
-				}
-				self.ThreeCards = append(self.ThreeCards,*node)
 			}
-		}
 
-		//M3已经拆完牌 清空
-		self.M3 = self.M3[0:0]
+			//2 清空 m2中值等于m3_v的牌
+			{
+				idx := -1
+				for i,v := range self.M2{
+					if v == m3_v{
+						idx = i
+						break
+					}
+				}
+				if idx != -1{
+					self.M2 = append(self.M2[:idx],self.M2[idx+1:]...)
+				}
+			}
+
+			//3 在M1中找到单牌组成三带一组合(即是遍历M1数值,不存在于M3和M2中,就认为是单牌了)
+			{
+				idx := -1
+
+				for m1_i,m1_v := range self.M1{
+
+					find := false
+
+					for _,m3_v := range self.M3{
+						if m1_v == m3_v {
+							find = true
+							break
+						}
+					}
+
+					//在M3中找到了就没必要再M2中找了,直接continue
+					if find == true{
+						continue
+					}
+
+					for _,m2_v := range self.M2{
+						if m1_v == m2_v{
+							find = true
+							break
+						}
+					}
+
+
+					if find == false{
+						//M1中有 且M3中没有 此时认成单张牌
+						idx = m1_i
+						break
+					}
+				}
+
+
+				//生出三带一并移除单张牌
+				if idx != -1{
+					node := &ThreeOneCarder{
+						ThreeCard:m3_v,
+						SingleCard:self.M1[idx],//这个确实是单牌(仅仅存在M1中,M2 M3中都没这个值)
+					}
+					self.ThreeOneCards = append(self.ThreeOneCards,*node)
+
+					self.M1 = append(self.M1[:idx],self.M1[idx+1:]...)
+				}else{
+					//只有三张一样的牌 没有单张 (这种情况很少见)
+					node := &ThreeCarder{
+						ThreeCard:m3_v,
+					}
+					self.ThreeCards = append(self.ThreeCards,*node)
+				}
+			}
 	}
+
+	//M3已经拆完牌 清空
+	self.M3 = self.M3[0:0]
 }
 
 func (self* Parser) GetBeautifulCard(a []uint32){
 	self.fillFourSourceList(a)
 	self.SplitCard()
+	self.display()
 }
 
 //填充4个辅助数组 作为拆牌的源数组
@@ -342,7 +436,7 @@ func (self* Parser) fillFourSourceList(a []uint32){
 		self.Cards = append(self.Cards,int(v))
 	}
 	sort.Ints(self.Cards)
-	fmt.Printf("排序后的手牌是:%+v\n",self.Cards)
+	myrpc.Rpcqueue <- fmt.Sprintf("\n手牌排序: %+v",self.Cards)
 	//end
 
 	for _,v := range self.Cards{
@@ -367,6 +461,7 @@ func (self* Parser) fillFourSourceList(a []uint32){
 			continue
 		}
 	}
+	myrpc.Rpcqueue <- fmt.Sprintf("\n拆分成四个辅助数组: %+v,%+v,%+v,%+v",self.M1,self.M2,self.M3,self.M4)
 }
 
 func (self* Parser) check(which []int,value int) bool {
@@ -379,22 +474,66 @@ func (self* Parser) check(which []int,value int) bool {
 	return false
 }
 
+//打印拆好的牌
 func (self* Parser) display(){
-	fmt.Println()
-	for _,v := range self.M1{
-		fmt.Printf("%d,",v)
+
+	myrpc.Rpcqueue <- fmt.Sprintf("\n+++++++++拆好的牌数据 begin+++++++++++++++++++:\n")
+	myrpc.Rpcqueue <- "火箭牌:"
+	if len(self.Rocket) != 0{
+		myrpc.Rpcqueue <- "大鬼 小鬼"
 	}
-	fmt.Println()
-	for _,v := range self.M2{
-		fmt.Printf("%d,",v)
+
+	myrpc.Rpcqueue <- fmt.Sprintf("\n炸弹牌:")
+	for _,v := range self.Bombes{
+		myrpc.Rpcqueue <- fmt.Sprintf("%d%d%d%d\n",v,v,v,v)
 	}
-	fmt.Println()
-	for _,v := range self.M3{
-		fmt.Printf("%d,",v)
+	myrpc.Rpcqueue <- fmt.Sprintf("\n双顺牌:")
+	for _,v := range self.DoubleLink{
+
+		begin_card := v.BeginValue
+		var ll []int
+		var i int
+
+		for i = 0; i < v.Len; i++{
+			ll = append(ll, begin_card + i)
+			ll = append(ll, begin_card + i)
+		}
+		myrpc.Rpcqueue <- fmt.Sprintf("%+v\n",ll)
+
 	}
-	fmt.Println()
-	for _,v := range self.M4{
-		fmt.Printf("%d,",v)
+	myrpc.Rpcqueue <- fmt.Sprintf("\n单顺牌:")
+	for _,v := range self.SingleLink{
+
+		begin_card := v.BeginValue
+		var ll []int
+		var i int
+
+		for i = 0; i < v.Len; i++{
+			ll = append(ll, begin_card + i)
+		}
+		myrpc.Rpcqueue <- fmt.Sprintf("%+v\n",ll)
+
 	}
-	fmt.Println()
+
+	myrpc.Rpcqueue <- fmt.Sprintf("\n三带一牌:")
+	for _,v := range self.ThreeOneCards{
+		myrpc.Rpcqueue <- fmt.Sprintf("%d%d%d-%d\n",v.ThreeCard,v.ThreeCard,v.ThreeCard,v.SingleCard)
+	}
+
+	myrpc.Rpcqueue <- fmt.Sprintf("\n三牌:")
+	for _,v := range self.ThreeCards{
+		myrpc.Rpcqueue <- fmt.Sprintf("%d%d%d\n",v.ThreeCard,v.ThreeCard,v.ThreeCard)
+	}
+
+	myrpc.Rpcqueue <- fmt.Sprintf("\n对子牌:")
+	for _,v := range self.DoubleCards{
+		myrpc.Rpcqueue <- fmt.Sprintf("%d%d  ",v,v)
+	}
+
+	myrpc.Rpcqueue <- fmt.Sprintf("\n单张牌:")
+	for _,v := range self.SingleCards{
+		myrpc.Rpcqueue <- fmt.Sprintf("%d  ",v)
+	}
+
+	myrpc.Rpcqueue <- fmt.Sprintf("\n+++++++++拆好的牌数据 end+++++++++++++++++++:")
 }

@@ -33,6 +33,7 @@ func server_parse_cmd_params(){
 
 func main() {
 
+	pb_ddz.NotWriteInit()
 	server_parse_cmd_params()
 
 	go myrpc.Rpclog(game.LogserverAddr,1)
@@ -54,6 +55,7 @@ func main() {
 			myrpc.Rpcqueue <- "SessionAccepted"
 		case *cellnet.SessionClosed:
 			myrpc.Rpcqueue <- fmt.Sprintf("close player=%s",player.Att.UserID)
+
 		case *pb_ddz.LoginAccountReq:
 			myrpc.Rpcqueue <- "LoginAccountReq"
 			rst,err := db.Query(msg.Userid)
@@ -108,15 +110,23 @@ func main() {
 		case *pb_ddz.OperationReq:
 			if player.Game.IsDoit == true{
 				//客户端在超时之前出牌了 记录下出的牌 存放到该玩家的结构体内
-				player.Game.Pre = ev.Message().(*ddz.Previouser)
+				//player.Game.Pre = ev.Message().(*ddz.Previouser)
+				if msg.Operation == pb_ddz.OperationType_pass{
+					player.Game.IsPassCard = true
+				}else{
+					player.Game.IsPassCard = false
+					player.Game.Pre =&ddz.Previouser{
+						Point:msg.Pos,
+						OperType:uint32(msg.Operation),
+						Cardtype:ddz.CARD_TYPE(msg.Data.Cardtype),
+						CardValue:msg.Data.Cardvalue,
+						Extra:msg.Data.Extra,
+						Nocards:msg.Nocards,
+					}
+				}
+
 				player.ExitSync.Done()
-/*				player.Game.Pre =&ddz.Previouser{
-					Point:msg.Pos,
-					OperType:uint32(msg.Operation),
-					Cardtype:ddz.CARD_TYPE(msg.Data.Cardtype),
-					CardValue:msg.Data.Cardvalue,
-					Extra:msg.Data.Extra,
-				}*/
+
 			}
 
 		}

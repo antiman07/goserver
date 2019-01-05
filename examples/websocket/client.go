@@ -112,8 +112,8 @@ func parse_cmd_params()(){
 
 	//第一个参数表示参数名称，第二个参数表示默认值，第三个参数表示使用说明和描述
 	tmp_runmode := flag.Int("rm", 1, "进程启动模式 1:前台运行模式 2:后台运行模式")
-	tmp_robots := flag.Int("b", 3, "choose robot numbers")
-	tmp_accid := flag.Int("i",10000,"批量开启机器人时 第一个账号ID")
+	tmp_robots := flag.Int("b", 6000, "choose robot numbers")
+	tmp_accid := flag.Int("i",9999,"批量开启机器人时 第一个账号ID")
 	tmp_roomid := flag.Int("r", 1, "choose roomid")
 	tmp_betmulti := flag.Int("s", 1, "choose betmulti")
 	tmp_betmulti_time := flag.Int("t", 5, "choose betmulti_time")

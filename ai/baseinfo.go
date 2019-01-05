@@ -3,6 +3,7 @@ package ai
 import (
 	"fmt"
 	"math/rand"
+	"sort"
 	"time"
 	"trunk/cellnet/game/ddz"
 	pbddz "trunk/cellnet/pb/ddz"
@@ -57,6 +58,14 @@ func fapai() (map[int][]uint32,[]uint32) {
 	return carmap,rest
 }
 
+func sendEnterSuccess(list []*gorillaws.WsSession){
+	for _,ses := range list{
+		ses.Send(&pbddz.StartMatchResp{
+			Code:pbddz.LobbyCode_lobby_success,
+		})
+	}
+}
+
 func send17card(list []*gorillaws.WsSession) []uint32{
 
 	pailist,dipailist := fapai()
@@ -68,6 +77,15 @@ func send17card(list []*gorillaws.WsSession) []uint32{
 		ses.Player().(*ddz.DDZ_Player).Game.Cardlist = pailist[it]
 		ses.Player().(*ddz.DDZ_Player).Game.Status = ddz.Type_matched
 
+		//这个操作是为了利用int类型API做排序 begin
+		var tmplist []int
+		for _,v := range pailist[it]{
+			tmplist = append(tmplist,int(v))
+		}
+		sort.Ints(tmplist)
+		fmt.Printf("玩家%s 17张牌是:%+v\n",ses.Player().(*ddz.DDZ_Player).Att.UserID,tmplist)
+		//end
+
 		ses.Send(&pbddz.PushRoomInfo{
 			SelfPos:selfpos,
 			Seats:&pbddz.SeatInfo{
@@ -76,6 +94,8 @@ func send17card(list []*gorillaws.WsSession) []uint32{
 			},
 		})
 	}
+
+	fmt.Printf("底牌是%+v\n",dipailist)
 
 	return dipailist
 }
@@ -147,6 +167,7 @@ func EnterRoom(s1 interface{},s2 interface{},s3 interface{}) error{
 	ses3 := s3.(*gorillaws.WsSession)
 	list = append(list, ses1,ses2,ses3)
 
+	sendEnterSuccess(list)
 	dipai := send17card(list)
 	findmain,dizhu := find_landowner(list)
 
@@ -191,8 +212,9 @@ func EnterRoom(s1 interface{},s2 interface{},s3 interface{}) error{
 		player1 := sortlist[0].Player().(*ddz.DDZ_Player)
 		player2 := sortlist[1].Player().(*ddz.DDZ_Player)
 		player3 := sortlist[2].Player().(*ddz.DDZ_Player)
+
 		player1.Game.Parse.GetBeautifulCard(player1.Game.Cardlist)
-		player2.Game.Parse.GetBeautifulCard(player1.Game.Cardlist)
+		player2.Game.Parse.GetBeautifulCard(player2.Game.Cardlist)
 		player3.Game.Parse.GetBeautifulCard(player3.Game.Cardlist)
 	}
 
@@ -200,6 +222,7 @@ func EnterRoom(s1 interface{},s2 interface{},s3 interface{}) error{
 	//开始出牌流程
 	var curoper_playid int = 0
 	var curoper_playerSession *gorillaws.WsSession = nil
+
 	for{
 		switch curoper_playid{
 		case 0:
@@ -234,9 +257,25 @@ func EnterRoom(s1 interface{},s2 interface{},s3 interface{}) error{
 		curoper_player.ExitSync.Wait()
 		t.Stop()
 
-		//判断玩家出的牌是否合法 (不合法要通知到出牌的玩家)begin
-		//todo...
-		//end
+
+		//判断客户端是否手里没牌了,没了就结束进入结算环节。
+
+		if curoper_player.Game.IsPassCard != true{
+			if curoper_player.Game.Pre.Nocards{
+				for _,ses := range sortlist{
+					ses.Send(&pbddz.GameoverPush{
+						DizhuWin:curoper_player.Game.IsMain,
+					})
+				}
+				//结算收益
+
+				return nil
+			}
+			//判断玩家出的牌是否合法 (不合法要通知到出牌的玩家)begin 服务端也需移除自己存储的玩家出过的牌
+			//todo...
+			//end
+		}
+
 
 		//判断玩家是否已经出牌了 出牌了就通知另外2个玩家 该玩家出牌内容 然后继续下一个人出牌
 		var otherTwoPlayer []*gorillaws.WsSession
@@ -249,8 +288,15 @@ func EnterRoom(s1 interface{},s2 interface{},s3 interface{}) error{
 			otherTwoPlayer = append(otherTwoPlayer,sortlist[0],sortlist[1])
 		}
 
-		for _,ses := range otherTwoPlayer{
-			ses.Send(&pbddz.PushPosOperation{
+		var info *pbddz.PushPosOperation
+		if curoper_player.Game.IsPassCard {
+			info = &pbddz.PushPosOperation{
+				//Pos:curoper_player.Game.Pre.Point,
+				Pos:curoper_player.Game.Point, //用Pre.Point 可能会崩溃(原因:Pre是nil)  这个字段意义不大
+				Operation:pbddz.OperationType(pbddz.OperationType_pass),
+			}
+		}else{
+			info = &pbddz.PushPosOperation{
 				Pos:curoper_player.Game.Pre.Point,
 				Operation:pbddz.OperationType(curoper_player.Game.Pre.OperType),
 				Data:&pbddz.CardData{
@@ -258,10 +304,18 @@ func EnterRoom(s1 interface{},s2 interface{},s3 interface{}) error{
 					Cardvalue:curoper_player.Game.Pre.CardValue,
 					Extra:curoper_player.Game.Pre.Extra,
 				},
-			})
+				Nocards:curoper_player.Game.Pre.Nocards,
+			}
 		}
 
-		curoper_playid += 1 //轮到下一个玩家
+		for _,ses := range otherTwoPlayer{
+			ses.Send(info)
+		}
+
+		curoper_playid += 1 //轮到下一个玩家,到最后一个玩家后 赋0进入下一轮
+		if curoper_playid == 3{
+			curoper_playid = 0
+		}
 	}
 
 	return nil

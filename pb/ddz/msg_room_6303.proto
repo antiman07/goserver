@@ -62,10 +62,10 @@ message PushRoomInfo {
 
 // 座位信息
 message SeatInfo {
-    required uint32 pos = 1; // 座位号
-    required string nickname = 2; // 昵称
-    required uint64 chips = 3; // 玩家金额
-    required uint32 avatar = 4; // 玩家头像
+    optional uint32 pos = 1; // 座位号
+    optional string nickname = 2; // 昵称
+    optional uint64 chips = 3; // 玩家金额
+    optional uint32 avatar = 4; // 玩家头像
     required role_sex sex = 5; // 性别
     repeated uint32 cards = 6; // 牌列表
     optional uint32 card_type = 7; // 手牌类型
@@ -167,7 +167,8 @@ message CardData{
 message OperationReq {
 	optional uint32 pos = 1;
     required operation_type operation = 2; // 玩家的操作类型
-    optional CardData data = 3; 
+    optional CardData data = 3;
+	optional bool nocards = 4; //手里是否没牌了
 }
 
 // 推送玩家操作
@@ -175,6 +176,12 @@ message PushPosOperation {
 	optional uint32 pos = 1;       //出牌人ID
     required operation_type operation = 2; // 玩家的操作类型
     optional CardData data = 3; 
+	optional bool nocards = 4; //手里是否没牌了
+}
+
+//推送游戏结束
+message GameoverPush {
+	optional bool dizhu_win =1; //TRUE 地主赢  FALSE 农民赢
 }
 
 // 金额信息
