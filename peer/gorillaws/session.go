@@ -64,6 +64,15 @@ func (self *WsSession) Close() {
 
 // 发送封包
 func (self *WsSession) Send(msg interface{}) {
+	//统计游戏期间 发送的协议数量 begin
+	switch game.GameName{
+	case "suoha":
+		self.player.(*suoha.Suoha_Player).IncReqTimes()
+	case "jdzjh":
+		self.player.(*jdzjh.Zjh_Player).IncReqTimes()
+	}
+	//end
+
 	self.sendQueue.Add(msg)
 }
 

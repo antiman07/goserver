@@ -32,9 +32,12 @@ func (self *DDZPipe) Pick(retList *[]interface{}) (exit bool) {
 
 	self.listGuard.Lock()
 
-	for len(self.list) == 0 {
+	self.listCond.Wait()
+
+/*	for len(self.list) == 0 {
 		self.listCond.Wait()
-	}
+	}*/
+
 
 	self.listGuard.Unlock()
 

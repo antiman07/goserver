@@ -7,11 +7,13 @@ import "msg_common.proto";
 //enum c_cmd {
 //    bcast_world_resp = 1;   // 全局广播
 //    bcast_msg_resp = 2;     // 广播消息
+//    stop_notice_push = 3;   // 公告消息
 //}
 
 //service msg_broadcast_service {
 //    rpc broadcastWorld (undefined) returns (bcast_world_resp);
 //    rpc broadcastMsg (undefined) returns (bcast_msg_resp);
+//    rpc stopnoticeMsg (undefined) returns (stop_notice_push);
 //}
 
 // 全局广播信息
@@ -22,4 +24,15 @@ message BcastworldResp {
 // 广播消息 多语言
 message BcastMsgResp {
     required Dmsg msg = 1;
+}
+
+// 广播消息 多语言
+message StopNoticePush{
+    required uint32 id = 1;
+    required uint32 type = 2; // 广播类型 1跑马灯,2公告
+    required uint32 executed = 3; // 1开启公告,0 撤销公告
+    required string content = 4;
+    optional uint32 start_time = 5;  // 播放开始时间
+    optional uint32 end_time = 6;  // 播放结束时间
+    optional uint32 interval_time = 7;  // 播放间隔
 }

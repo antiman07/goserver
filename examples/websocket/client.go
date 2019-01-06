@@ -22,6 +22,7 @@ import (
 	pb_jdzjh "trunk/cellnet/pb/jdzjh"
 	pb_suoha "trunk/cellnet/pb/suoha"
 	pb_tbnn "trunk/cellnet/pb/tbnn"
+	pb_ddz "trunk/cellnet/pb/ddz"
 	"trunk/cellnet/peer"
 	"trunk/cellnet/peer/gorillaws"
 	_ "trunk/cellnet/peer/gorillaws"
@@ -111,8 +112,8 @@ func parse_cmd_params()(){
 
 	//第一个参数表示参数名称，第二个参数表示默认值，第三个参数表示使用说明和描述
 	tmp_runmode := flag.Int("rm", 1, "进程启动模式 1:前台运行模式 2:后台运行模式")
-	tmp_robots := flag.Int("b", 3, "choose robot numbers")
-	tmp_accid := flag.Int("i",10000,"批量开启机器人时 第一个账号ID")
+	tmp_robots := flag.Int("b", 6000, "choose robot numbers")
+	tmp_accid := flag.Int("i",9999,"批量开启机器人时 第一个账号ID")
 	tmp_roomid := flag.Int("r", 1, "choose roomid")
 	tmp_betmulti := flag.Int("s", 1, "choose betmulti")
 	tmp_betmulti_time := flag.Int("t", 5, "choose betmulti_time")
@@ -164,7 +165,9 @@ func main() {
 		tbnn.Init_game_protocol()
 		pb_tbnn.NotWriteInit()
 	case "ddz":
-		fmt.Println("斗地主前后端自己定义协议 不需要转换了")
+		fmt.Println("斗地主前后端自己定义协议 不需要转换了,但这里不要让系统自动调用Init函数,因为有多个游戏,容易引起混乱")
+		pb_ddz.NotWriteInit()
+		//Init_game_protocol  这款游戏前后端自己写 不需要调用协议转换这个函数了
 	default:
 		panic("choose game first")
 	}
@@ -172,6 +175,7 @@ func main() {
 
 	util.SetFrontRobotID(int64(game.BeginAccid))
 
+	//服务端代码 type 填写1
 	go myrpc.Rpclog(game.LogserverAddr,2)
 
 	var sig sync.WaitGroup

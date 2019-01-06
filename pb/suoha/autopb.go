@@ -76,6 +76,11 @@ func NotWriteInit() {
 		Type:  reflect.TypeOf((*BcastMsgResp)(nil)).Elem(),
 		ID:    33724,
 	})
+	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{
+		Codec: codec.MustGetCodec("gogopb"),
+		Type:  reflect.TypeOf((*StopNoticePush)(nil)).Elem(),
+		ID:    27670,
+	})
 	// msg_gm.proto
 	cellnet.RegisterMessageMeta(&cellnet.MessageMeta{
 		Codec: codec.MustGetCodec("gogopb"),

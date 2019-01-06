@@ -3,10 +3,10 @@ package ai
 import (
 	"fmt"
 	"math/rand"
+	"sort"
 	"time"
 	"trunk/cellnet/game/ddz"
 	pbddz "trunk/cellnet/pb/ddz"
-	"trunk/cellnet/myrpc"
 	"trunk/cellnet/peer/gorillaws"
 )
 
@@ -17,13 +17,14 @@ var Paidata = [5][13]int {
 	{0x31,0x32,0x33,0x34,0x35,0x36,0x37,0x38,0x39,0x3a,0x3b,0x3c,0x3d},//黑桃(Spade)
 	{0x4E,0x4F}, //王(Joker)
 }
-
+//说明 21 22 分别标示 A 2,没用1 2 或者14 15 标示是为了拆牌算法需要,避免组单顺牌时把 A 2 这样的大牌组进去
+//大小鬼 用100 80标示,没用紧接着12 13后面的数字也是为了拆牌算法的考虑,避免组单顺时把大小鬼这样的大牌组进去
 var paidata = []uint32{
-	1,2,3,4,5,6,7,8,9,10,11,12,13,
-	1,2,3,4,5,6,7,8,9,10,11,12,13,
-	1,2,3,4,5,6,7,8,9,10,11,12,13,
-	1,2,3,4,5,6,7,8,9,10,11,12,13,
-	14,15,
+	3,4,5,6,7,8,9,10,11,12,13,21,22,
+	3,4,5,6,7,8,9,10,11,12,13,21,22,
+	3,4,5,6,7,8,9,10,11,12,13,21,22,
+	3,4,5,6,7,8,9,10,11,12,13,21,22,
+	100,80,
 }
 
 func fapai() (map[int][]uint32,[]uint32) {
@@ -57,30 +58,33 @@ func fapai() (map[int][]uint32,[]uint32) {
 	return carmap,rest
 }
 
-func firstcard(s1 interface{},s2 interface{},s3 interface{}){
+func sendEnterSuccess(list []*gorillaws.WsSession){
+	for _,ses := range list{
+		ses.Send(&pbddz.StartMatchResp{
+			Code:pbddz.LobbyCode_lobby_success,
+		})
+	}
+}
 
-	var list []*gorillaws.WsSession
-	ses1 := s1.(*gorillaws.WsSession)
-	ses2 := s2.(*gorillaws.WsSession)
-	ses3 := s3.(*gorillaws.WsSession)
+func send17card(list []*gorillaws.WsSession) []uint32{
 
-	player1 := ses1.Player().(*ddz.DDZ_Player)
-	player2 := ses2.Player().(*ddz.DDZ_Player)
-	player3 := ses3.Player().(*ddz.DDZ_Player)
-
-	fmt.Printf("firstcard %s %s %s",player1.Att.UserID,player2.Att.UserID,player3.Att.UserID)
-	list = append(list, ses1,ses2,ses3)
-
-	pailist,restlist := fapai()
-	fmt.Println(pailist,restlist)
+	pailist,dipailist := fapai()
 
 	var selfpos uint32
 	for it,ses := range list{
-		myrpc.Rpcqueue <- "PushRoomInfo"
 		selfpos = uint32(it + 1)//玩家座位号从 1 开始往后排
 		ses.Player().(*ddz.DDZ_Player).Game.Point = selfpos
 		ses.Player().(*ddz.DDZ_Player).Game.Cardlist = pailist[it]
 		ses.Player().(*ddz.DDZ_Player).Game.Status = ddz.Type_matched
+
+		//这个操作是为了利用int类型API做排序 begin
+		var tmplist []int
+		for _,v := range pailist[it]{
+			tmplist = append(tmplist,int(v))
+		}
+		sort.Ints(tmplist)
+		fmt.Printf("玩家%s 17张牌是:%+v\n",ses.Player().(*ddz.DDZ_Player).Att.UserID,tmplist)
+		//end
 
 		ses.Send(&pbddz.PushRoomInfo{
 			SelfPos:selfpos,
@@ -90,16 +94,15 @@ func firstcard(s1 interface{},s2 interface{},s3 interface{}){
 			},
 		})
 	}
+
+	fmt.Printf("底牌是%+v\n",dipailist)
+
+	return dipailist
 }
 
 //产生地主 根据进入房间的次序 挨个询问玩家
-func find_landowner(s1 interface{},s2 interface{},s3 interface{}) bool{
+func find_landowner(list []*gorillaws.WsSession) (bool,*ddz.DDZ_Player){
 
-	var list []*gorillaws.WsSession
-	ses1 := s1.(*gorillaws.WsSession)
-	ses2 := s2.(*gorillaws.WsSession)
-	ses3 := s3.(*gorillaws.WsSession)
-	list = append(list, ses1,ses2,ses3)
 	var curoper_playid int = 1
 	var curoper_playerSession *gorillaws.WsSession = nil
 	for {
@@ -109,17 +112,18 @@ func find_landowner(s1 interface{},s2 interface{},s3 interface{}) bool{
 
 		switch curoper_playid{
 		case 1:
-			curoper_playerSession = ses1
+			curoper_playerSession = list[0]
 		case 2:
-			curoper_playerSession = ses2
+			curoper_playerSession = list[1]
 		case 3:
-			curoper_playerSession = ses3
+			curoper_playerSession = list[2]
 
 		}
 
 		curoper_player := curoper_playerSession.Player().(*ddz.DDZ_Player)
 
-		curoper_player.Game.NowIsLead = true
+		//默认设置true,超时调用函数中会从新设置flase, 挡住超时后收到客户端发来的协议,防止再次调用ExitSync.Done 导致崩溃
+		curoper_player.Game.NowIsLead = true//用于控制ExitSync.Done仅被调用一次
 
 		for _,ses := range list{
 			ses.Send(&pbddz.RobBankerOper{
@@ -141,87 +145,178 @@ func find_landowner(s1 interface{},s2 interface{},s3 interface{}) bool{
 		t.Stop()
 		//判断是否已经有玩家当选地主了
 		if curoper_player.Game.IsMain{
-			return true
+			return true,curoper_player
 		}else{
 			curoper_playid += 1
 			//轮了一圈 没人选地主 [尴尬] 从新发牌
 			if curoper_playid == 3{
-				return false
+				return false,nil
 			}
 		}
 	}
-	fmt.Println("not come hereeeee")
-	return true
+
+	return false,nil
 }
 
 
 func EnterRoom(s1 interface{},s2 interface{},s3 interface{}) error{
 
-	firstcard(s1,s2,s3)
-	findmain := find_landowner(s1,s2,s3)
+	var list []*gorillaws.WsSession
+	ses1 := s1.(*gorillaws.WsSession)
+	ses2 := s2.(*gorillaws.WsSession)
+	ses3 := s3.(*gorillaws.WsSession)
+	list = append(list, ses1,ses2,ses3)
+
+	sendEnterSuccess(list)
+	dipai := send17card(list)
+	findmain,dizhu := find_landowner(list)
+
 	if findmain{
-		//开始出牌流程
-		fmt.Println("not come here2")
+		//服务器保存地主玩家的3张底牌 地主有20张 农民有17张
+		dizhu.Game.Cardlist = append(dizhu.Game.Cardlist,dipai...)
+
+		//3张底牌发给客户端 地主玩家
+		for _,ses := range list{
+			ses.Send(&pbddz.DipaiPush{
+				CurrPos:dizhu.Game.Point,//群发3人,这是地主的Point
+				Cards:dipai,
+			})
+		}
 	}else{
 		//重新选地主
-		fmt.Println("come here")
 		EnterRoom(s1,s2,s3)
 	}
 
-	for{
-		fmt.Println("not come here1")
-		time.Sleep(time.Second*600)
+	//确定3个人的出牌顺序 从地主开始,后面2人顺延 begin
+	var sortlist []*gorillaws.WsSession
 
+	var dizhu_index int
+	for index,ses := range list{
+		if ses.Player().(*ddz.DDZ_Player) == dizhu{
+			dizhu_index =  index
+			break
+		}
+	}
+	switch dizhu_index{
+	case 0:
+		sortlist = append(sortlist,list[0],list[1],list[2])
+	case 1:
+		sortlist = append(sortlist,list[1],list[2],list[0])
+	case 2:
+		sortlist = append(sortlist,list[2],list[0],list[1])
+	}
+	//end
+
+	//拆出一手好牌的逻辑
+	{
+		player1 := sortlist[0].Player().(*ddz.DDZ_Player)
+		player2 := sortlist[1].Player().(*ddz.DDZ_Player)
+		player3 := sortlist[2].Player().(*ddz.DDZ_Player)
+
+		player1.Game.Parse.GetBeautifulCard(player1.Game.Cardlist)
+		player2.Game.Parse.GetBeautifulCard(player2.Game.Cardlist)
+		player3.Game.Parse.GetBeautifulCard(player3.Game.Cardlist)
 	}
 
-/*	session0 := s1.(cellnet.Session)
-	session1 := s2.(cellnet.Session)
-	session2 := s3.(cellnet.Session)
-	switch whichroom {
-	case 1:
-		rst := get_free_desk_from_room1()
-		if rst != nil{
-			desk := rst.(*Desk)
-			desk.IsGameing = true
-			desk.ID = 1000
-			desk.CurPlay = ""
-			pailist := fapai().(map[int][]int)
-			pson0 := desk.PeopleList[0]
-			pson0.MySelfName = session0.GetPlayer().(role.Player).Att.Account
-			pson0.MyHandPai = pailist[0]
-			pson0.Ses = session0
-			pson0.Sesslist = append(pson0.Sesslist,session1)
-			pson0.Sesslist = append(pson0.Sesslist,session2)
-			session0.GetPlayer().(role.Player).Desk = desk
-			//session0.Send()
 
-			pson1 := desk.PeopleList[1]
-			pson1.MySelfName = session1.GetPlayer().(role.Player).Att.Account
-			pson1.MyHandPai = pailist[1]
-			pson1.Ses = session1
-			pson1.Sesslist = append(pson0.Sesslist,session0)
-			pson1.Sesslist = append(pson0.Sesslist,session2)
-			session1.GetPlayer().(role.Player).Desk = desk
+	//开始出牌流程
+	var curoper_playid int = 0
+	var curoper_playerSession *gorillaws.WsSession = nil
 
-			pson2 := desk.PeopleList[2]
-			pson2.MySelfName = session2.GetPlayer().(role.Player).Att.Account
-			pson2.MyHandPai = pailist[2]
-			pson2.Ses = session2
-			pson2.Sesslist = append(pson0.Sesslist,session0)
-			pson2.Sesslist = append(pson0.Sesslist,session1)
-			session2.GetPlayer().(role.Player).Desk = desk
-
-			fmt.Println(desk.ID,desk.IsGameing,desk.PeopleList)
-			for _,node := range desk.PeopleList{
-				fmt.Println(node.MySelfName,node.MyHandPai)
-			}
-		}else{
-			return errors.New("房间没空余牌桌")
+	for{
+		switch curoper_playid{
+		case 0:
+			curoper_playerSession = sortlist[0]
+		case 1:
+			curoper_playerSession = sortlist[1]
+		case 2:
+			curoper_playerSession = sortlist[2]
 		}
 
-	default:
-		return errors.New("选择房间出错")
-	}*/
+		curoper_player := curoper_playerSession.Player().(*ddz.DDZ_Player)
+
+		//设置允许出牌的flag 默认是true 超时后设置flase,晚于超时后再发来出牌不被允许。
+		curoper_player.Game.IsDoit = true//用于控制ExitSync.Done仅被调用一次
+
+		for _,ses := range sortlist{
+			ses.Send(&pbddz.StagePush{
+				CurrPos:curoper_player.Game.Point,
+				RoundTime:12,
+			})
+		}
+
+		//启动超时处理
+		f := func(){
+			curoper_player.Game.IsDoit = false
+			curoper_player.ExitSync.Done()
+			fmt.Println("该玩家没出牌,默认成过牌操作")
+		}
+		var t *time.Timer
+		t = time.AfterFunc(time.Second*12,f)
+		curoper_player.ExitSync.Add(1)
+		curoper_player.ExitSync.Wait()
+		t.Stop()
+
+
+		//判断客户端是否手里没牌了,没了就结束进入结算环节。
+
+		if curoper_player.Game.IsPassCard != true{
+			if curoper_player.Game.Pre.Nocards{
+				for _,ses := range sortlist{
+					ses.Send(&pbddz.GameoverPush{
+						DizhuWin:curoper_player.Game.IsMain,
+					})
+				}
+				//结算收益
+
+				return nil
+			}
+			//判断玩家出的牌是否合法 (不合法要通知到出牌的玩家)begin 服务端也需移除自己存储的玩家出过的牌
+			//todo...
+			//end
+		}
+
+
+		//判断玩家是否已经出牌了 出牌了就通知另外2个玩家 该玩家出牌内容 然后继续下一个人出牌
+		var otherTwoPlayer []*gorillaws.WsSession
+		switch curoper_playid{
+		case 0:
+			otherTwoPlayer = append(otherTwoPlayer,sortlist[1],sortlist[2])
+		case 1:
+			otherTwoPlayer = append(otherTwoPlayer,sortlist[0],sortlist[2])
+		case 2:
+			otherTwoPlayer = append(otherTwoPlayer,sortlist[0],sortlist[1])
+		}
+
+		var info *pbddz.PushPosOperation
+		if curoper_player.Game.IsPassCard {
+			info = &pbddz.PushPosOperation{
+				//Pos:curoper_player.Game.Pre.Point,
+				Pos:curoper_player.Game.Point, //用Pre.Point 可能会崩溃(原因:Pre是nil)  这个字段意义不大
+				Operation:pbddz.OperationType(pbddz.OperationType_pass),
+			}
+		}else{
+			info = &pbddz.PushPosOperation{
+				Pos:curoper_player.Game.Pre.Point,
+				Operation:pbddz.OperationType(curoper_player.Game.Pre.OperType),
+				Data:&pbddz.CardData{
+					Cardtype:uint32(curoper_player.Game.Pre.Cardtype),
+					Cardvalue:curoper_player.Game.Pre.CardValue,
+					Extra:curoper_player.Game.Pre.Extra,
+				},
+				Nocards:curoper_player.Game.Pre.Nocards,
+			}
+		}
+
+		for _,ses := range otherTwoPlayer{
+			ses.Send(info)
+		}
+
+		curoper_playid += 1 //轮到下一个玩家,到最后一个玩家后 赋0进入下一轮
+		if curoper_playid == 3{
+			curoper_playid = 0
+		}
+	}
 
 	return nil
 }
